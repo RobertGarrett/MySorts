@@ -57,3 +57,10 @@ class RandomQuickSort
         return i
     end
 end
+
+class RubyQuickSort
+    extend Timer
+    def self.sort(arr)
+        return arr.sort
+    end
+end

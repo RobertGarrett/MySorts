@@ -4,7 +4,14 @@ require_relative 'Timer'
 # Drastically faster compared to QuickSort as implemented in Ruby.
 # I suspect this is due to C optimization of insert in the
 # core ruby environment, but have not confirmed this.
-class InsertionSort
+# Amazingly enough, this seems to have comparable performance with
+# ruby's built in sort method for a randomized data set. This method
+# is known to be a quick sort, however it is implemented in C, and is
+# thus much faster than a Ruby implementation. An obvious downside
+# however, is that this insertion sort has a space complexity of O(n),
+# as opposed to quick sorts O(1).
+
+class MyInsertionSort
     extend Timer
 
     def self.sort(arr)
@@ -16,7 +23,12 @@ class InsertionSort
     end
 end
 
-# Suffers from language implementation of 'delete_at'
+# Attempts to implement an O(1) space complexity insertion sort with
+# comparable time complexity to the above method are so far unsuccessful.
+# This is seemingly due to the time required to delete an element from
+# an array. Will research more into why this is a costly process, and
+# attempt to implement a more effective solution.
+
 class InPlaceInsertionSort
     extend Timer
 
@@ -29,9 +41,10 @@ class InPlaceInsertionSort
         return arr
     end
 
-# Performance suffers from language implementation of arr[a..b]
+# Performance also suffered from language implementation of arr[a..b]
 # so I created a use specific binary search method which avoids
 # this costly process.
+
     def self.insert_idx(arr, sort_end, x)
         l, r = 0, sort_end
         while l <= r
@@ -51,6 +64,6 @@ end
 
 if __FILE__ == $PROGRAM_NAME
     arr = Array.new(1000000){rand(0..100)}
-    InsertionSort.time(arr)
+    MyInsertionSort.time(arr)
     #InPlaceInsertionSort.time(arr)
 end

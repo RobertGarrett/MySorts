@@ -12,7 +12,8 @@ QuickSort.time(random)
 RandomQuickSort.time(random)
 ReferenceMergeSort.time(random)
 MyMergeSort.time(random)
-InsertionSort.time(random)
+MyInsertionSort.time(random)
+RubyQuickSort.time(random)
 #InPlaceInsertionSort.time(random)
 
 print "\n_____SORTED #{"_"*75}\n"
@@ -22,7 +23,8 @@ QuickSort.time(sorted)
 RandomQuickSort.time(sorted)
 ReferenceMergeSort.time(sorted)
 MyMergeSort.time(sorted)
-InsertionSort.time(sorted)
+MyInsertionSort.time(sorted)
+RubyQuickSort.time(sorted)
 #InPlaceInsertionSort.time(sorted)
 
 print "\n_____Reversed #{"_"*75}\n"
@@ -32,7 +34,8 @@ QuickSort.time(reversed)
 RandomQuickSort.time(reversed)
 ReferenceMergeSort.time(reversed)
 MyMergeSort.time(reversed)
-InsertionSort.time(reversed)
+MyInsertionSort.time(reversed)
+RubyQuickSort.time(reversed)
 #InPlaceInsertionSort.time(reversed)
 
 print "\n_____String Array #{"_"*75}\n"
@@ -41,7 +44,8 @@ QuickSort.time(strings)
 RandomQuickSort.time(strings)
 ReferenceMergeSort.time(strings)
 MyMergeSort.time(strings)
-InsertionSort.time(strings)
+MyInsertionSort.time(strings)
+RubyQuickSort.time(strings)
 #InPlaceInsertionSort.time(strings)
 
 puts puts
