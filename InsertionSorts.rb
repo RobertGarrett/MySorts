@@ -22,12 +22,9 @@ class InPlaceInsertionSort
 
     def self.sort(arr)
         (1...arr.length).each do |i|
-            if arr[i] > arr[i-1]
-                next
-            else
-                idx = arr[i] >= arr[0] ? insert_idx(arr, i, arr[i]) : 0
-                arr.insert( idx, arr.delete_at(i) )
-            end
+            next if arr[i] > arr[i-1]
+            idx = arr[i] >= arr[0] ? insert_idx(arr, i, arr[i]) : 0
+            arr.insert( idx, arr.delete_at(i) )
         end
         return arr
     end
@@ -53,6 +50,7 @@ class InPlaceInsertionSort
 end
 
 if __FILE__ == $PROGRAM_NAME
-    arr = Array.new(100){rand(0..100)}
-    InPlaceInsertionSort.time(arr)
+    arr = Array.new(1000000){rand(0..100)}
+    InsertionSort.time(arr)
+    #InPlaceInsertionSort.time(arr)
 end
