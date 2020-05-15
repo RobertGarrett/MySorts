@@ -1,5 +1,6 @@
 require_relative 'Timer'
 
+# Merge sort implemented with O(1) space complexity.
 class MergeSort
     extend Timer
 

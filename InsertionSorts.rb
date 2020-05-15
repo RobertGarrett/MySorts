@@ -23,6 +23,10 @@ class InsertionSort
     end
 end
 
+# This implementation would seemingly be very effective for linked list
+# where the computative cost of removing and inserting elements is minimal.
+# Will implement in the future.
+
 class InPlaceInsertionSort
     extend Timer
 
