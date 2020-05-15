@@ -6,46 +6,35 @@ require 'faker'
 
 
 print "\n_____Random #{"_"*75}\n"
-random = Array.new(1000000) { rand(0...100000) }
-Radix.time(random)
-QuickSort.time(random)
-RandomQuickSort.time(random)
-ReferenceMergeSort.time(random)
-MyMergeSort.time(random)
-MyInsertionSort.time(random)
-RubyQuickSort.time(random)
-#InPlaceInsertionSort.time(random)
+Radix.time_random
+QuickSort.time_random
+RandomQuickSort.time_random
+MergeSort.time_random
+InsertionSort.time_random
+InPlaceInsertionSort.time_random
 
 print "\n_____SORTED #{"_"*75}\n"
-sorted = (1..1000).to_a
-Radix.time(sorted)
-QuickSort.time(sorted)
-RandomQuickSort.time(sorted)
-ReferenceMergeSort.time(sorted)
-MyMergeSort.time(sorted)
-MyInsertionSort.time(sorted)
-RubyQuickSort.time(sorted)
-#InPlaceInsertionSort.time(sorted)
+Radix.time_sorted
+QuickSort.time_sorted
+RandomQuickSort.time_sorted
+MergeSort.time_sorted
+InsertionSort.time_sorted
+InPlaceInsertionSort.time_sorted
 
 print "\n_____Reversed #{"_"*75}\n"
-reversed = sorted.reverse
-Radix.time(reversed)
-QuickSort.time(reversed)
-RandomQuickSort.time(reversed)
-ReferenceMergeSort.time(reversed)
-MyMergeSort.time(reversed)
-MyInsertionSort.time(reversed)
-RubyQuickSort.time(reversed)
-#InPlaceInsertionSort.time(reversed)
+Radix.time_reversed
+QuickSort.time_reversed
+RandomQuickSort.time_reversed
+MergeSort.time_reversed
+InsertionSort.time_reversed
+InPlaceInsertionSort.time_reversed
 
 print "\n_____String Array #{"_"*75}\n"
-strings = Array.new(100000){ Faker::Hipster.sentence }
+strings = Array.new(10000){ Faker::Hipster.sentence }
 QuickSort.time(strings)
 RandomQuickSort.time(strings)
-ReferenceMergeSort.time(strings)
-MyMergeSort.time(strings)
-MyInsertionSort.time(strings)
-RubyQuickSort.time(strings)
-#InPlaceInsertionSort.time(strings)
+MergeSort.time(strings)
+InsertionSort.time(strings)
+InPlaceInsertionSort.time(strings)
 
 puts puts

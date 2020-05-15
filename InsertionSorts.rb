@@ -1,41 +1,40 @@
 require_relative "BinarySearch.rb"
 require_relative 'Timer'
 
-# Drastically faster compared to QuickSort as implemented in Ruby.
-# I suspect this is due to C optimization of insert in the
-# core ruby environment, but have not confirmed this.
-# Amazingly enough, this seems to have comparable performance with
-# ruby's built in sort method for a randomized data set. This method
-# is known to be a quick sort, however it is implemented in C, and is
-# thus much faster than a Ruby implementation. An obvious downside
-# however, is that this insertion sort has a space complexity of O(n),
-# as opposed to quick sorts O(1).
-
-class MyInsertionSort
+class InsertionSort
     extend Timer
 
     def self.sort(arr)
         sorted = [arr[0]]
         (1...arr.length).each do |i|
-            sorted.insert(BinarySearch.insert_idx(sorted, arr[i]))
+            if sorted[-1] < arr[i]
+                sorted << arr[i]
+            elsif arr[i] < sorted[0]
+                sorted.insert(0, arr[i])
+            else
+                idx = BinarySearch.insert_idx(sorted, arr[i])
+                sorted.insert( idx, arr[i] )
+            end
+
+            #sorted.insert( bsearch_index{ |x| x == arr[i] } )
+
         end
         return sorted
     end
 end
 
-# Attempts to implement an O(1) space complexity insertion sort with
-# comparable time complexity to the above method are so far unsuccessful.
-# This is seemingly due to the time required to delete an element from
-# an array. Will research more into why this is a costly process, and
-# attempt to implement a more effective solution.
-
 class InPlaceInsertionSort
     extend Timer
 
-    def self.sort(arr)
+    def self.sort(arr, idx = -1)
         (1...arr.length).each do |i|
-            next if arr[i] > arr[i-1]
-            idx = arr[i] >= arr[0] ? insert_idx(arr, i, arr[i]) : 0
+            if arr[i-1] < arr[i]
+                next
+            elsif arr[i] <= arr[0]
+                idx = 0
+            else
+                idx = insert_idx(arr, i, arr[i])
+            end
             arr.insert( idx, arr.delete_at(i) )
         end
         return arr
@@ -63,7 +62,6 @@ class InPlaceInsertionSort
 end
 
 if __FILE__ == $PROGRAM_NAME
-    arr = Array.new(1000000){rand(0..100)}
-    MyInsertionSort.time(arr)
-    #InPlaceInsertionSort.time(arr)
+    InsertionSort.time_random
+    InPlaceInsertionSort.time_random
 end
