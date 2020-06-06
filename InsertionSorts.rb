@@ -15,9 +15,6 @@ class InsertionSort
                 idx = BinarySearch.insert_idx(sorted, arr[i])
                 sorted.insert( idx, arr[i] )
             end
-
-            #sorted.insert( bsearch_index{ |x| x == arr[i] } )
-
         end
         return sorted
     end
@@ -30,7 +27,8 @@ end
 class InPlaceInsertionSort
     extend Timer
 
-    def self.sort(arr, idx = -1)
+    def self.sort(arr)
+        idx = -1
         (1...arr.length).each do |i|
             if arr[i-1] < arr[i]
                 next
