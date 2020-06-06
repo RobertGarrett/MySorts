@@ -1,7 +1,7 @@
-require_relative 'Timer'
-require "byebug"
+require_relative "InsertionSorts.rb"
 
-class MyStringBucket
+class InsertionStringBucket
+
     extend Timer
 
     def self.sort(arr)
@@ -14,7 +14,7 @@ class MyStringBucket
         while array_stack.length > 0
             idx = idx_stack.pop
             result, add = counting_sort(array_stack.pop, idx)
-            if add
+            if(add)
                 final += result
             else
                 array_stack += result
@@ -25,7 +25,9 @@ class MyStringBucket
     end
 
     def self.counting_sort(arr, n)
-        if (0...arr.length).all?{ |i| arr[i] == arr[0] }
+        if arr.length <= 10
+            return InsertionSort.sort(arr), true
+        elsif (0...arr.length).all?{ |i| arr[i] == arr[0] }
             return arr, true
         end
 
@@ -50,10 +52,11 @@ class MyStringBucket
         stack = []
         keys = bkts.keys.sort { |k1, k2| k2 <=> k1 } # Ruby uses a QuickSort
         keys.each do |char|
-            stack << bkts[char] if bkts[char].length != 0
+            stack << bkts[char] if bkts[char].length >= 1
         end
         stack << nils if nils.length >= 1
 
         return stack, false
     end
+
 end

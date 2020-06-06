@@ -8,7 +8,7 @@ module Timer
         sorted = self.sort(arr)
         t2 = Time.now
         if arr.sort == sorted
-            puts "#{self.name} #{"-"*(25-self.name.length)} #{(t2 - t1)*1000} ms"
+            puts "#{self.name} #{"-"*(25-self.name.length)} #{(t2-t1)*1000} ms"
         else
             puts "#{self.name} #{"-"*(25-self.name.length)} FAILED"
             print "\n" + sorted.to_s + "\n\n"
