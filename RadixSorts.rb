@@ -1,5 +1,4 @@
 require_relative 'Timer'
-require "byebug"
 
 class Radix
     extend Timer
@@ -28,57 +27,7 @@ class Radix
             result[count_arr[digit]] = item
             i += -1
         end
-        print result
         return result
-    end
-end
-
-class StringRadix
-    extend Timer
-
-    @@ORDER = []
-
-    def self.sort(arr, idx = 0)
-        puts "----- #{idx} -----"
-        return arr.length > 1 ? counting_sort(arr, idx) : arr
-    end
-
-    def self.counting_sort(arr, n)
-        print arr
-        buckets = Hash.new { |h, k| h[k] = [] }
-
-
-        arr.each do |item|
-            buckets[ item[n] || "nil"] << item
-            addChar(item[n])
-        end
-        @@ORDER << "nil" if
-
-        result = []
-        debugger
-        @@ORDER.each do |char|
-            result += sort(buckets[char], n+1)
-        end
-
-        return result
-    end
-
-    def self.addChar(char)
-        puts "null/space" if !char || char == " "
-
-        if( char && !@@ORDER.include?(char) )
-            if @@ORDER.length == 0
-                @@ORDER << char
-                return
-            end
-
-            (0...@@ORDER.length).each do |i|
-                if char < @@ORDER[i]
-                    @@ORDER.insert(i, char)
-                    return
-                end
-            end
-        end
     end
 
 end
