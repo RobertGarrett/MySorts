@@ -1,5 +1,7 @@
+require "byebug"
+
 module Timer
-    @@random = Array.new(10000) { rand(0...100000000) }
+    @@random = Array.new(10000) { rand(0...10000) }
     @@sorted = (1..10000).to_a
 
     def time(arr)

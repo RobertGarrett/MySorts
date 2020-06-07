@@ -1,6 +1,6 @@
-require_relative "InsertionSorts.rb"
+require_relative 'Insertion.rb'
 
-class InsertionStringBucket
+class InsertionStringRadix
 
     extend Timer
 

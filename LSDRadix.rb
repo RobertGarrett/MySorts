@@ -1,6 +1,6 @@
 require_relative 'Timer'
 
-class Radix
+class LSDRadix
     extend Timer
 
     def self.sort(arr)
@@ -9,9 +9,9 @@ class Radix
         return arr
     end
 
-    def self.counting_sort(input_arr, exp = 0)
+    def self.counting_sort(input_arr, exp)
         count_arr = Array.new(10){0}
-        result = Array.new(input_arr.size)
+        result = Array.new( input_arr.size )
 
         n = 10**exp
         m = 10*n

@@ -1,4 +1,4 @@
-require_relative "BinarySearch.rb"
+require_relative 'BinarySearch.rb'
 require_relative 'Timer'
 
 class InsertionSort
