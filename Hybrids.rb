@@ -15,10 +15,10 @@ class InsertionStringRadix
             idx = idx_stack.pop
             result, add = counting_sort(array_stack.pop, idx)
             if(add)
-                final += result
+                final.push(*result)
             else
-                array_stack += result
-                idx_stack += Array.new(result.length, idx+1)
+                array_stack.push(*result)
+                idx_stack.push(*Array.new(result.length, idx+1))
             end
         end
         return final

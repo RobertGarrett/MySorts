@@ -3,9 +3,18 @@ require_relative 'Timer'
 class LSDRadix
     extend Timer
 
+    # For some reason, this may occasionally fail. This seems to happen when
+    # using random rounded floats. Will look into this to fix
+
     def self.sort(arr)
-        exp = arr.max.digits.length
-        (0...exp).each { |i| arr = counting_sort(arr, i) }
+        max = arr.max.to_i.digits.length
+        min = 0
+        arr.each do |ele|
+            if ele.class == Float
+                min = [min, -ele.to_s.split('.')[1].length].min
+            end
+        end
+        (min...max).each { |i| arr = counting_sort(arr, i) }
         return arr
     end
 

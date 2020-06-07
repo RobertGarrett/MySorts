@@ -2,23 +2,25 @@ require_relative 'Timer'
 
 class MSDRadix
     extend Timer
+    @@times = Hash.new(0)
 
     def self.sort(arr)
         return arr if arr.length <= 1
 
         final = []
         array_stack = [arr]
-        idx_stack = [arr.max.digits.length-1]
+        idx_stack = [arr.max.to_i.digits.length-1]
 
         while array_stack.length > 0
             current = array_stack.pop
-            idx = [idx_stack.pop, current.max.digits.length-1].min
+            idx = idx_stack.pop
+
             result, add = counting_sort(current, idx)
             if add
-                final += result
+                final.push(*result)
             else
-                array_stack += result
-                idx_stack += Array.new(result.length, idx-1)
+                array_stack.push(*result)
+                idx_stack.push( *Array.new(result.length, idx-1) )
             end
         end
         return final
@@ -35,17 +37,8 @@ class MSDRadix
         m = 10*n
 
         arr.each { |e| bkts[(e%m)/n] << e }
-        stack = get_stack_additions(bkts)
-
-        return stack
-    end
-
-    def self.get_stack_additions(bkts)
-        stack = []
-        (0..9).each do |i|
-            stack.unshift(bkts[i]) if bkts[i].length != 0
-        end
-        return stack, false
+        bkts.reject! { |bucket| bucket.empty?}
+        return bkts.reverse, false
     end
 
 end
@@ -68,10 +61,10 @@ class StringRadix
             idx = idx_stack.pop
             result, add = counting_sort(array_stack.pop, idx)
             if add
-                final += result
+                final.push(*result)
             else
-                array_stack += result
-                idx_stack += Array.new(result.length, idx+1)
+                array_stack.push(*result)
+                idx_stack.push(*Array.new(result.length, idx+1))
             end
         end
         return final

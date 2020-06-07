@@ -4,52 +4,43 @@ require_relative 'LSDRadix.rb'
 require_relative 'Insertion.rb'
 require_relative 'MSDRadix.rb'
 require_relative 'Hybrids.rb'
-require 'faker'
+
+comp_sorts = {
+    QuickSort => false,
+    RandomQuickSort => true,
+    MergeSort => true,
+    InsertionSort => true,
+    InPlaceInsertionSort => true
+}
+Timer.header(:random)
+comp_sorts.each { |clazz, bool| clazz.time_all(:random) }
+LSDRadix.time_all(:random)
+MSDRadix.time_all(:random)
 
 
 
-print "\n\n_____Random #{"_"*75}\n\n"
-LSDRadix.time_random
-MSDRadix.time_random
-QuickSort.time_random
-RandomQuickSort.time_random
-MergeSort.time_random
-InsertionSort.time_random
-InPlaceInsertionSort.time_random
-#
-#
-#
-# print "\n\n_____SORTED #{"_"*75}\n\n"
-# Radix.time_sorted
-# QuickSort.time_sorted
-# RandomQuickSort.time_sorted
-# MergeSort.time_sorted
-# InsertionSort.time_sorted
-# InPlaceInsertionSort.time_sorted
-#
-#
-#
-# print "\n\n_____Reversed #{"_"*75}\n\n"
-# Radix.time_reversed
-# QuickSort.time_reversed
-# RandomQuickSort.time_reversed
-# MergeSort.time_reversed
-# InsertionSort.time_reversed
-# InPlaceInsertionSort.time_reversed
+Timer.header(:sorted)
+comp_sorts.each { |clazz, bool| clazz.time_all(:sorted, bool) }
+LSDRadix.time_all(:sorted)
+MSDRadix.time_all(:sorted)
+# QuickSort.time_all(:sorted, false)
 
+Timer.header(:reversed)
+comp_sorts.each { |clazz, bool| clazz.time_all(:reversed, bool) }
+LSDRadix.time_all(:reversed)
+MSDRadix.time_all(:reversed)
+# QuickSort.time_all(:reversed, false)
 
+Timer.header(:floats)
+comp_sorts.each { |clazz, bool| clazz.time_all(:floats) }
+LSDRadix.time_all(:floats)
+MSDRadix.time_all(:floats)
+#QuickSort.time_all(:floats, false)
 
-strings = Array.new(100000){ Faker::Alphanumeric.alphanumeric(number: 10) }
-max = strings.map(&:length).max
-print "\n\n_____Short String Array ( MAX = #{max} )#{"_"*75}\n\n"
-
-QuickSort.time(strings)
-RandomQuickSort.time(strings)
-MergeSort.time(strings)
-InsertionSort.time(strings)
-InPlaceInsertionSort.time(strings)
-StringRadix.time(strings)
-InsertionStringRadix.time(strings)
+Timer.header(:strings)
+comp_sorts.each { |clazz, bool| clazz.time_all(:strings) }
+StringRadix.time_all(:strings)
+InsertionStringRadix.time_all(:strings)
 
 
 puts puts
