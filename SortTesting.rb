@@ -1,17 +1,18 @@
-require_relative 'Merge.rb'
-require_relative 'Quick.rb'
-require_relative 'LSDRadix.rb'
-require_relative 'Insertion.rb'
-require_relative 'MSDRadix.rb'
-require_relative 'Hybrids.rb'
+Dir.children(".").each do |file|
+    if file[0] != "."
+        require_relative file
+    end
+end
 
 comp_sorts = {
-    QuickSort => false,
-    RandomQuickSort => true,
-    MergeSort => true,
-    InsertionSort => true,
-    InPlaceInsertionSort => true
+    Ruby => true,
+    Quick => false,
+    RandomQuick => true,
+    Merge => true,
+    Insertion => true,
+    InPlaceInsertion => true
 }
+
 Timer.header(:random)
 comp_sorts.each { |clazz, bool| clazz.time_all(:random) }
 LSDRadix.time_all(:random)

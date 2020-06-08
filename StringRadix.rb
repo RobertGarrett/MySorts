@@ -1,7 +1,10 @@
-require_relative 'Insertion.rb'
+require_relative "Timer"
 
-class InsertionStringRadix
+# Being an MSD sort, this method is mostly unaffected by length of string.
+# This is because it terminates early, as opposed to an LSD radix sort
+# which must iterate over the entire the entire max length of input array.
 
+class StringRadix
     extend Timer
 
     def self.sort(arr)
@@ -14,7 +17,7 @@ class InsertionStringRadix
         while array_stack.length > 0
             idx = idx_stack.pop
             result, add = counting_sort(array_stack.pop, idx)
-            if(add)
+            if add
                 final.push(*result)
             else
                 array_stack.push(*result)
@@ -25,9 +28,7 @@ class InsertionStringRadix
     end
 
     def self.counting_sort(arr, n)
-        if arr.length <= 10
-            return InsertionSort.sort(arr), true
-        elsif (0...arr.length).all?{ |i| arr[i] == arr[0] }
+        if (0...arr.length).all?{ |i| arr[i] == arr[0] }
             return arr, true
         end
 
@@ -52,11 +53,10 @@ class InsertionStringRadix
         stack = []
         keys = bkts.keys.sort { |k1, k2| k2 <=> k1 } # Ruby uses a QuickSort
         keys.each do |char|
-            stack << bkts[char] if bkts[char].length >= 1
+            stack << bkts[char] if bkts[char].length != 0
         end
         stack << nils if nils.length >= 1
 
         return stack, false
     end
-
 end
