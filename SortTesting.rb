@@ -1,3 +1,4 @@
+# Load all ruby files (except self) in current directory
 Dir.children(".").each do |file|
     if file[-3..-1] == ".rb" && file[0...-3] != "SortTesting"
         require_relative file
