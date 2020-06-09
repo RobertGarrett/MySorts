@@ -6,14 +6,14 @@ class InPlaceInsertion
     def self.sort(arr)
         idx = -1
         (1...arr.length).each do |i|
-            if arr[i-1] < arr[i]
-                next
-            elsif arr[i] <= arr[0]
-                idx = 0
+            next if arr[i-1] < arr[i]
+            
+            if arr[i] <= arr[0]
+                arr.unshift(arr.delete_at(i))
             else
                 idx = insert_idx(arr, i, arr[i])
+                arr.insert( idx, arr.delete_at(i) )
             end
-            arr.insert( idx, arr.delete_at(i) )
         end
         return arr
     end

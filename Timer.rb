@@ -1,5 +1,6 @@
 require "faker"
 require "byebug"
+
 module Timer
     @@len_1 = 25
     @@len_2 = 10
@@ -10,13 +11,13 @@ module Timer
         header += "|_" + ("%-#{@@len_2+3}s" % 'n=100').gsub(' ', "_")
         header += "|_" + ("%-#{@@len_2+3}s" % 'n=1000').gsub(' ', "_")
         header += "|_" + ("%-#{@@len_2+3}s" % 'n=10000').gsub(' ', "_")
-        header += "|_" + ("%-#{@@len_2+3}s" % 'n=100000').gsub(' ', "_")
+        #header += "|_" + ("%-#{@@len_2+3}s" % 'n=100000').gsub(' ', "_")
 
         puts "\n\n" + header + "|__________________#{type.to_s.upcase}"
     end
 
     def time_all(type, doLarge = true)
-        times = { 10 => 0, 100 => 0, 1000 => 0, 10000 => -1, 100000 => -1}
+        times = { 10 => 0, 100 => 0, 1000 => 0, 10000 => -1}
         times.each do |k, v|
             break if k >= 10000 && !doLarge
             case type
