@@ -31,15 +31,15 @@ comp_sorts.each { |clazz, bool| clazz.time_all(:reversed, bool) }
 LSDRadix.time_all(:reversed)
 MSDRadix.time_all(:reversed)
 
-Timer.header(:floats)
-comp_sorts.each { |clazz, bool| clazz.time_all(:floats) }
-LSDRadix.time_all(:floats)
-MSDRadix.time_all(:floats)
+# Timer.header(:floats)
+# comp_sorts.each { |clazz, bool| clazz.time_all(:floats) }
+# LSDRadix.time_all(:floats)
+# MSDRadix.time_all(:floats)
 
-Timer.header(:strings)
-comp_sorts.each { |clazz, bool| clazz.time_all(:strings) }
-StringRadix.time_all(:strings)
-InsertionStringRadix.time_all(:strings)
+# Timer.header(:strings)
+# comp_sorts.each { |clazz, bool| clazz.time_all(:strings) }
+# StringRadix.time_all(:strings)
+# InsertionStringRadix.time_all(:strings)
 
 
 puts puts

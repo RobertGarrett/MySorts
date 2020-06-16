@@ -1,6 +1,8 @@
 require_relative 'BinarySearch'
 require_relative 'Timer'
 
+# Avoids reverse ordered worst case by first comparing each
+# element to the first and last elements of sorted
 class Insertion
     extend Timer
 
