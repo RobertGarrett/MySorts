@@ -1,4 +1,4 @@
-require_relative "Timer"
+require_relative "../Timer"
 
 # Being an MSD sort, this method is mostly unaffected by length of string.
 # This is because it terminates early, as opposed to an LSD radix sort

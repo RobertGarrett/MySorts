@@ -1,4 +1,4 @@
-require_relative "Timer"
+require_relative "../Timer"
 
 class Ruby
     extend Timer

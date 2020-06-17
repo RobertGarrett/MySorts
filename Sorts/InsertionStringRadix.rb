@@ -1,7 +1,7 @@
+require_relative '../Timer'
 require_relative 'Insertion.rb'
 
 class InsertionStringRadix
-
     extend Timer
 
     def self.sort(arr)
