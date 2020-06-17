@@ -15,23 +15,21 @@ module Timer
 
     def self.header(type)
         header = "_"*@@len_1
-        header += "|_" + ("%-#{@@len_2}s" % 'n=10').gsub(' ', "_")
         header += "|_" + ("%-#{@@len_2}s" % 'n=100').gsub(' ', "_")
-        header += "|_" + ("%-#{@@len_2}s" % 'n=1000').gsub(' ', "_")
-        header += "|_" + ("%-#{@@len_2}s" % 'n=10000').gsub(' ', "_")
-        header += "|_" + ("%-#{@@len_2}s" % 'n=100000').gsub(' ', "_")
+        header += "|_" + ("%-#{@@len_2}s" % 'n=10^3').gsub(' ', "_")
+        header += "|_" + ("%-#{@@len_2}s" % 'n=10^4').gsub(' ', "_")
+        header += "|_" + ("%-#{@@len_2}s" % 'n=10^5').gsub(' ', "_")
 
         puts "\n\n" + header + "|__________________#{type.to_s.upcase}"
     end
 
     def time_all(type)
-        times = { 10 => nil, 100 => nil, 1000 => nil, 10000 => nil, 100000 => nil}
+        times = { 100 => nil, 1000 => nil, 10000 => nil, 100000 => nil}
         @@is_float = type == :float
 
         times.each do |k, v|
             break if self.isException(type, k)
             @@is_float = false;
-            n = 2**(k.digits.length)
             case type
                 when :random
                     times[k] = self.time( Array.new(k) {rand(1..k)}, false );
@@ -42,7 +40,7 @@ module Timer
                 when :floats
                     times[k] = self.time( Array.new(k) { (rand(0.0...k)).round(3) }, false )
                 when :strings
-                    times[k] = self.time( Array.new(k){ self.rand_string(n) }, false )
+                    times[k] = self.time( Array.new(k){ self.rand_string(100) }, false )
             end
         end
 
@@ -97,25 +95,30 @@ private
         range = (0...ratios.length)
 
         comparisons = {
-            "n" => range.map { |i| ratios[i] / 10 },
-            #"nk" => range.map { |i| ratios[i] / nk_scale( 10**(i+1) ) },
-            "nlog(n)" => range.map { |i| ratios[i] / log_scale( 10**(i+1) ) },
-            "n^2" => range.map { |i| ratios[i] / 100 }
+            "n" =>
+                avg( range.map { |i| ratios[i] / 10 } ),
+            "nlog(n)" =>
+                avg( range.map { |i| ratios[i] / log_scale( 10**(i+1) ) } ),
+            "n^2" =>
+                avg( range.map { |i| ratios[i] / 100 } )
         }
-        comparisons = comparisons.map { |k, arr| [k, avg(arr)] }.to_h
-
-        # Since v +1/v = (v+1)/v > 1, no need to take absolute value
-        return comparisons.min_by { |k, v| (v + 1/v) - 1 }[0]
+        min = comparisons.min_by do |k, v|
+            # Here, v + 1/v is used to account for fractional ratios
+            # i.e, ratios of .5 and 2 are treated as "equal"
+            (v + 1/v) - 1
+        end
+        return min[0] == "n" && self.is_length_dependent() ? "nk" : min[0]
     end
 
     def log_scale(n)
         return 10*Math::log(10*n, n)
     end
 
-    def nk_scale(n)
-        length = n.to_s.length
-        length -= 1 if @@is_float
-        return (10.0*n + length+1)/(n + length)
+    def is_length_dependent()
+        arr1 = Array.new(1000){rand(100...1000)}
+        arr2 = Array.new(1000){rand(10000...100000)}
+        ratio = self.time(arr1, false)/self.time(arr2, false)
+        return ratio < 0.9
     end
 
     def rand_string(n)
