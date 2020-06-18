@@ -6,14 +6,11 @@ SORT_EXCEPTIONS = JSON.parse( File.read("sort_exceptions.json") )
 module Timer
     @@len_1 = 25
     @@len_2 = 13
-    @@is_float = false;
-
-    def sort_exceptions
-        return @@sort_exceptions
-    end
+    @@type = nil
 
 
     def self.header(type)
+        @@type = type
         header = "_"*@@len_1
         header += "|_" + ("%-#{@@len_2}s" % 'n=100').gsub(' ', "_")
         header += "|_" + ("%-#{@@len_2}s" % 'n=10^3').gsub(' ', "_")
@@ -25,38 +22,24 @@ module Timer
 
     def time_all(type)
         times = { 100 => nil, 1000 => nil, 10000 => nil, 100000 => nil}
-        @@is_float = type == :float
-
         times.each do |k, v|
-            break if self.isException(type, k)
-            @@is_float = false;
-            case type
-                when :random
-                    times[k] = self.time( Array.new(k) {rand(1..k)}, false );
-                when :sorted
-                    times[k] = self.time( (1..k).to_a, false )
-                when :reversed
-                    times[k] = self.time( (1..k).to_a.reverse, false )
-                when :floats
-                    times[k] = self.time( Array.new(k) { (rand(0.0...k)).round(3) }, false )
-                when :strings
-                    times[k] = self.time( Array.new(k){ self.rand_string(100) }, false )
-            end
+            break if isException(k)
+            times[k] = time( make_array(k), false )
         end
-
         self.print_results(times)
     end
 
 
 
-    def time(toSort, print = true)
+    def time(to_sort, print = true)
         total = 0
         5.times do
-            arr = toSort.clone
+            arr = to_sort.clone
 
             t1 = Time.now
             sorted = self.sort(arr)
             t2 = Time.now
+
             compare = arr.sort
             if compare == sorted
                 total += (t2-t1)*1000
@@ -64,8 +47,6 @@ module Timer
                 comp = []
                 (0..arr.length).each { |i| comp << i if compare[i] != sorted[i] }
                 puts "#{('%-25.25s' % self.name).gsub(' ', '-')} FAILED"
-                debugger
-                print "\n" + comp.to_s + "\n\n"
                 return
             end
         end
@@ -84,7 +65,6 @@ private
         times.each do |k, v|
             time = v.nil? ? "-"*(@@len_2-3) : "%#{@@len_2-3}.3f" % (v)
             output += "| #{time} ms"
-
         end
         puts output + "|  ~ #{get_big_O(times)}"
     end
@@ -107,7 +87,7 @@ private
             # i.e, ratios of .5 and 2 are treated as "equal"
             (v + 1/v) - 1
         end
-        return min[0] == "n" && self.is_length_dependent() ? "nk" : min[0]
+        return min[0] == "n" && self.is_length_dependent ? "nk" : min[0]
     end
 
     def log_scale(n)
@@ -115,19 +95,35 @@ private
     end
 
     def is_length_dependent()
-        arr1 = Array.new(1000){rand(100...1000)}
-        arr2 = Array.new(1000){rand(10000...100000)}
-        ratio = self.time(arr1, false)/self.time(arr2, false)
+        arr1 = make_array(1000, 1)
+        arr2 = make_array(1000, 5)
+        ratio = time(arr1, false)/time(arr2, false)
         return ratio < 0.9
+    end
+
+    def make_array(n, k = nil)
+        max = k ? 10**k : 100000
+        case @@type
+            when :random
+                 return Array.new(n){ rand(1..max) }
+            when :sorted
+                 return k.nil? ? (1..n).to_a : (max..(max+n)).to_a
+            when :reversed
+                return k.nil? ? (1..n).to_a.reverse : (max..(max+n)).to_a.reverse
+            when :floats
+                 return Array.new(n){ rand(0.0...max).round(3) }
+            when :strings
+                 return Array.new(n){ rand_string(k || 100) }
+        end
     end
 
     def rand_string(n)
         return Faker::Alphanumeric.alphanumeric(number: n)
     end
 
-    def isException(sym, num)
+    def isException(num)
         exceptions = SORT_EXCEPTIONS[self.name];
-        return exceptions && (exceptions[sym.to_s] || 10**10) <= num
+        return exceptions && (exceptions[@@type.to_s] || 10**10) <= num
     end
 
     def median(array)
