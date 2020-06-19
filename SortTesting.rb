@@ -7,23 +7,28 @@ end
 
 comp_sorts = [Ruby, Quick, RandomQuick, Merge, Insertion, InPlaceInsertion]
 
+
 Timer.header(:random)
 comp_sorts.each { |clazz| clazz.time_all(:random) }
+BucketSort.time_all(:random)
 LSDRadix.time_all(:random)
 MSDRadix.time_all(:random)
 
 Timer.header(:sorted)
 comp_sorts.each { |clazz| clazz.time_all(:sorted) }
+BucketSort.time_all(:sorted)
 LSDRadix.time_all(:sorted)
 MSDRadix.time_all(:sorted)
 
 Timer.header(:reversed)
 comp_sorts.each { |clazz| clazz.time_all(:reversed) }
+BucketSort.time_all(:reversed)
 LSDRadix.time_all(:reversed)
 MSDRadix.time_all(:reversed)
 
 Timer.header(:floats)
 comp_sorts.each { |clazz| clazz.time_all(:floats) }
+BucketSort.time_all(:floats)
 LSDRadix.time_all(:floats)
 MSDRadix.time_all(:floats)
 

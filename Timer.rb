@@ -47,6 +47,7 @@ module Timer
                 comp = []
                 (0..arr.length).each { |i| comp << i if compare[i] != sorted[i] }
                 puts "#{('%-25.25s' % self.name).gsub(' ', '-')} FAILED"
+                debugger
                 return
             end
         end
@@ -87,29 +88,46 @@ private
             # i.e, ratios of .5 and 2 are treated as "equal"
             (v + 1/v) - 1
         end
-        return min[0] == "n" && self.is_length_dependent ? "nk" : min[0]
+
+        if min[0] == "n"
+            return "n+k" if self.test_n_plus_k
+            return "nk" if self.test_nk
+            return "n"
+        else
+            return min[0]
+        end
     end
 
     def log_scale(n)
         return 10*Math::log(10*n, n)
     end
 
-    def is_length_dependent()
-        arr1 = make_array(1000, 1)
-        arr2 = make_array(1000, 5)
-        ratio = time(arr1, false)/time(arr2, false)
-        return ratio < 0.9
+    def test_nk()
+        arr1 = [1,9]
+        arr2 = [11111111, 11111119]
+        ratio = time(arr2, false)/time(arr1, false)
+        return ratio >= 4
+    end
+
+    def test_n_plus_k()
+        return false if @@type == :strings
+        arr1 = [0, 10000]
+        count1 = ((arr1.max - arr1.min) / 10).floor + 1.0
+        arr2 = [0, 1000000]
+        count2 = ((arr2.max - arr2.min) / 10).floor + 1.0
+        timed_ratio = time(arr2, false)/time(arr1, false)
+        return timed_ratio >= 10
     end
 
     def make_array(n, k = nil)
         max = k ? 10**k : 100000
         case @@type
             when :random
-                 return Array.new(n){ rand(1..max) }
+                 return Array.new(n){ rand(1...max) }
             when :sorted
-                 return k.nil? ? (1..n).to_a : (max..(max+n)).to_a
+                 return k.nil? ? (1..n).to_a : (max...(max+n)).to_a
             when :reversed
-                return k.nil? ? (1..n).to_a.reverse : (max..(max+n)).to_a.reverse
+                return k.nil? ? (1..n).to_a.reverse : (max...(max+n)).to_a.reverse
             when :floats
                  return Array.new(n){ rand(0.0...max).round(3) }
             when :strings
