@@ -3,6 +3,23 @@ require "byebug"
 
 SORT_EXCEPTIONS = JSON.parse( File.read("sort_exceptions.json") )
 
+SPECIAL_ARRAYS = {
+    "nk" => {
+        random:   [ [90, 10], [111111190, 111111110] ],
+        sorted:   [ [10, 90], [111111110, 111111190] ],
+        reversed: [ [90, 10], [111111190, 111111110] ],
+        floats:   [ [9.0, 1.0], [11111119.0, 11111111.0] ],
+        strings:  [ ["zz", "aa"], ["aaaaaaazz", "aaaaaaaaa"]]
+    },
+    "n+k" => {
+        random:   [ [10000, 0], [1000000, 0] ],
+        sorted:   [ [0, 10000], [0, 1000000] ],
+        reversed: [ [10000, 0], [1000000, 0] ],
+        floats:   [ [10000.0, 0.0], [1000000.0, 0.0] ],
+        strings:  [ ["abcde", "a"], ["abcdefg", "a"] ]
+    }
+}
+
 module Timer
     @@len_1 = 25
     @@len_2 = 13
@@ -103,19 +120,15 @@ private
     end
 
     def test_nk()
-        arr1 = [1,9]
-        arr2 = [11111111, 11111119]
-        ratio = time(arr2, false)/time(arr1, false)
-        return ratio >= 4
+        arr1, arr2 = SPECIAL_ARRAYS["nk"][@@type]
+        timed_ratio = time( arr2.clone, false )/time( arr1.clone, false )
+        return timed_ratio >= 2.0
     end
 
     def test_n_plus_k()
         return false if @@type == :strings
-        arr1 = [0, 10000]
-        count1 = ((arr1.max - arr1.min) / 10).floor + 1.0
-        arr2 = [0, 1000000]
-        count2 = ((arr2.max - arr2.min) / 10).floor + 1.0
-        timed_ratio = time(arr2, false)/time(arr1, false)
+        arr1, arr2 = SPECIAL_ARRAYS["n+k"][@@type]
+        timed_ratio = time( arr2.clone, false )/time( arr1.clone, false )
         return timed_ratio >= 10
     end
 

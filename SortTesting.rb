@@ -5,37 +5,66 @@ Dir.children("./Sorts").each do |file|
     end
 end
 
-comp_sorts = [Ruby, Quick, RandomQuick, Merge, Insertion, InPlaceInsertion]
 
 
-Timer.header(:random)
-comp_sorts.each { |clazz| clazz.time_all(:random) }
-BucketSort.time_all(:random)
-LSDRadix.time_all(:random)
-MSDRadix.time_all(:random)
-
-Timer.header(:sorted)
-comp_sorts.each { |clazz| clazz.time_all(:sorted) }
-BucketSort.time_all(:sorted)
-LSDRadix.time_all(:sorted)
-MSDRadix.time_all(:sorted)
-
-Timer.header(:reversed)
-comp_sorts.each { |clazz| clazz.time_all(:reversed) }
-BucketSort.time_all(:reversed)
-LSDRadix.time_all(:reversed)
-MSDRadix.time_all(:reversed)
-
-Timer.header(:floats)
-comp_sorts.each { |clazz| clazz.time_all(:floats) }
-BucketSort.time_all(:floats)
-LSDRadix.time_all(:floats)
-MSDRadix.time_all(:floats)
-
-Timer.header(:strings)
-comp_sorts.each { |clazz, bool| clazz.time_all(:strings) }
-StringRadix.time_all(:strings)
-InsertionStringRadix.time_all(:strings)
+class Object
+  def is_number?
+    to_f.to_s == to_s || to_i.to_s == to_s
+  end
+end
 
 
-puts puts
+
+DATA_TYPES = [:random, :sorted, :reversed, :floats, :strings]
+OPTIONS = DATA_TYPES.each_with_index.map do |type, idx|
+    "#{idx+1}) #{type.to_s.capitalize}"
+end
+OPTIONS.insert(0, "0) All")
+
+SORT_GROUPS = {
+    numbers: [
+        Ruby, Quick, RandomQuick, Merge, Insertion,
+        InPlaceInsertion, BucketSort, LSDRadix, MSDRadix
+    ],
+    strings: [
+        Ruby, Quick, RandomQuick, Merge, Insertion,
+        InPlaceInsertion, StringRadix, InsertionStringRadix
+    ]
+}
+SORT_GROUPS.default = SORT_GROUPS[:numbers]
+
+
+
+def get_option
+    puts "\nTesting Options:\n"
+    OPTIONS.each { |opt| puts "     #{opt}" }
+    print "Your Selection (-1 to exit): "
+    return gets.chomp
+end
+
+def delegate(option)
+    case option
+        when 0; DATA_TYPES.each { |type| run(type) }
+        when 1,2,3,4,5; run_tests( DATA_TYPES[option-1] )
+        else; puts "!--- Invalid Selection ---!"
+    end
+end
+
+def run_tests(type)
+    Timer.header(type)
+    sorts = SORT_GROUPS[type]
+    sorts = type == :strings ? SORT_GROUPS[:strings] : SORT_GROUPS[:default]
+    sorts.each { |sort| sort.time_all(type) }
+end
+
+
+
+exit = false
+while !exit
+    option = get_option()
+    if option.is_number?
+        break if option == "-1"
+        delegate( Integer(option) )
+    end
+end
+puts ""
