@@ -16,6 +16,7 @@ end
 
 
 DATA_TYPES = [:random, :sorted, :reversed, :floats, :strings]
+
 OPTIONS = DATA_TYPES.each_with_index.map do |type, idx|
     "#{idx+1}) #{type.to_s.capitalize}"
 end

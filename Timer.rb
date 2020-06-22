@@ -1,5 +1,8 @@
 require "faker"
 require "byebug"
+require_relative "./Util"
+
+
 
 SORT_EXCEPTIONS = JSON.parse( File.read("sort_exceptions.json") )
 
@@ -19,6 +22,8 @@ SPECIAL_ARRAYS = {
         strings:  [ ["abcde", "a"], ["abcdefg", "a"] ]
     }
 }
+
+
 
 module Timer
     @@len_1 = 25
@@ -41,7 +46,7 @@ module Timer
         times = { 100 => nil, 1000 => nil, 10000 => nil, 100000 => nil}
         times.each do |k, v|
             break if isException(k)
-            times[k] = time( make_array(k), false )
+            times[k] = time( Util.make_array(k, @@type), false )
         end
         self.print_results(times)
     end
@@ -58,15 +63,13 @@ module Timer
             t2 = Time.now
 
             compare = arr.sort
-            if compare == sorted
-                total += (t2-t1)*1000
-            else
+            if compare != sorted
                 comp = []
                 (0..arr.length).each { |i| comp << i if compare[i] != sorted[i] }
                 puts "#{('%-25.25s' % self.name).gsub(' ', '-')} FAILED"
-                debugger
                 return
             end
+            total += (t2-t1)*1000
         end
 
         if print
@@ -78,12 +81,14 @@ module Timer
 
 private
 
+
     def print_results(times)
         output = "#{("%-#{@@len_1}s" % self.name).gsub(' ', '-')}"
         times.each do |k, v|
             time = v.nil? ? "-"*(@@len_2-3) : "%#{@@len_2-3}.3f" % (v)
             output += "| #{time} ms"
         end
+        times
         puts output + "|  ~ #{get_big_O(times)}"
     end
 
@@ -93,18 +98,14 @@ private
         range = (0...ratios.length)
 
         comparisons = {
-            "n" =>
-                avg( range.map { |i| ratios[i] / 10 } ),
-            "nlog(n)" =>
-                avg( range.map { |i| ratios[i] / log_scale( 10**(i+1) ) } ),
-            "n^2" =>
-                avg( range.map { |i| ratios[i] / 100 } )
+            "n" =>       Util.avg( range.map { |i| ratios[i] / 10 } ),
+            "nlog(n)" => Util.avg( range.map { |i| ratios[i] / Util.log_scale(i) } ),
+            "n^2" =>     Util.avg( range.map { |i| ratios[i] / 100 } )
         }
-        min = comparisons.min_by do |k, v|
-            # Here, v + 1/v is used to account for fractional ratios
-            # i.e, ratios of .5 and 2 are treated as "equal"
-            (v + 1/v) - 1
-        end
+
+        # Here, v + 1/v is used to account for fractional ratios
+        # i.e, ratios of .5 and 2 are treated as "equal"
+        min = comparisons.min_by { |k, v| (v + 1/v) - 1 }
 
         if min[0] == "n"
             return "n+k" if self.test_n_plus_k
@@ -113,10 +114,6 @@ private
         else
             return min[0]
         end
-    end
-
-    def log_scale(n)
-        return 10*Math::log(10*n, n)
     end
 
     def test_nk()
@@ -129,41 +126,13 @@ private
         return false if @@type == :strings
         arr1, arr2 = SPECIAL_ARRAYS["n+k"][@@type]
         timed_ratio = time( arr2.clone, false )/time( arr1.clone, false )
-        return timed_ratio >= 10
+        return timed_ratio >= 10.0
     end
 
-    def make_array(n, k = nil)
-        max = k ? 10**k : 100000
-        case @@type
-            when :random
-                 return Array.new(n){ rand(1...max) }
-            when :sorted
-                 return k.nil? ? (1..n).to_a : (max...(max+n)).to_a
-            when :reversed
-                return k.nil? ? (1..n).to_a.reverse : (max...(max+n)).to_a.reverse
-            when :floats
-                 return Array.new(n){ rand(0.0...max).round(3) }
-            when :strings
-                 return Array.new(n){ rand_string(k || 100) }
-        end
-    end
-
-    def rand_string(n)
-        return Faker::Alphanumeric.alphanumeric(number: n)
-    end
 
     def isException(num)
         exceptions = SORT_EXCEPTIONS[self.name];
         return exceptions && (exceptions[@@type.to_s] || 10**10) <= num
-    end
-
-    def median(array)
-        sorted = array.sort
-        len = sorted.length
-        (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
-    end
-    def avg(array)
-        return array.sum / array.length
     end
 
 end
