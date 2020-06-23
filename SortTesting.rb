@@ -4,14 +4,7 @@ Dir.children("./Sorts").each do |file|
         require_relative "./Sorts/#{file}"
     end
 end
-
-
-
-class Object
-  def is_number?
-    to_f.to_s == to_s || to_i.to_s == to_s
-  end
-end
+require_relative "./Util"
 
 
 
@@ -24,17 +17,17 @@ OPTIONS.insert(0, "0) All")
 
 SORT_GROUPS = {
     numbers: [
-        Ruby, Quick, RandomQuick, Merge, Insertion,
-        InPlaceInsertion, BucketSort, LSDRadix, MSDRadix
+        Ruby, Quick, RandomQuick, Merge, Insertion, Shell,
+        InPlaceInsertion, Bucket, Pigeonhole, LSDRadix, MSDRadix
     ],
     strings: [
-        Ruby, Quick, RandomQuick, Merge, Insertion,
+        Ruby, Quick, RandomQuick, Merge, Insertion, Shell,
         InPlaceInsertion, StringRadix, InsertionStringRadix
     ]
 }
 SORT_GROUPS.default = SORT_GROUPS[:numbers]
 
-
+#Pigeonhole.sort(Util.make_array(100, :random))
 
 def get_option
     puts "\nTesting Options:\n"
@@ -45,7 +38,7 @@ end
 
 def delegate(option)
     case option
-        when 0; DATA_TYPES.each { |type| run(type) }
+    when 0; DATA_TYPES.each { |type| run_tests(type) }
         when 1,2,3,4,5; run_tests( DATA_TYPES[option-1] )
         else; puts "!--- Invalid Selection ---!"
     end
@@ -55,7 +48,7 @@ def run_tests(type)
     Timer.header(type)
     sorts = SORT_GROUPS[type]
     sorts = type == :strings ? SORT_GROUPS[:strings] : SORT_GROUPS[:default]
-    sorts.each { |sort| sort.time_all(type) }
+    sorts.each { |sort| sort.time_all }
 end
 
 
@@ -63,7 +56,7 @@ end
 exit = false
 while !exit
     option = get_option()
-    if option.is_number?
+    if Util.is_number?(option)
         break if option == "-1"
         delegate( Integer(option) )
     end

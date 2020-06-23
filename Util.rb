@@ -1,4 +1,11 @@
 class Util
+
+    def self.time(&proc)
+        t1 = Time.now
+        val = proc.call()
+        return { time: (Time.now - t1)*1000, val: val }
+    end
+
     def self.make_array(n, type)
         max = 100000
         case type
@@ -32,6 +39,10 @@ class Util
     def self.log_scale(i)
         n = 10**(i+1)
         return 10*Math::log(10*n, n)
+    end
+
+    def self.is_number?(obj)
+        return obj.to_f.to_s == obj.to_s || obj.to_i.to_s == obj.to_s
     end
 
 end

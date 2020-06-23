@@ -2,7 +2,7 @@ require_relative "../Timer"
 require_relative "./Insertion"
 require "byebug"
 
-class BucketSort
+class Bucket
     extend Timer
 
     def self.sort(arr, bucket_size = 10)
