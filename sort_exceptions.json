@@ -1,9 +1,0 @@
-{
-    "Quick":{
-        "sorted": 10000,
-        "reversed": 10000
-    },
-    "InPlaceInsertion":{
-        "reversed": 100000
-    }
-}

@@ -4,8 +4,6 @@ require_relative "./Util"
 
 
 
-SORT_EXCEPTIONS = JSON.parse( File.read("sort_exceptions.json") )
-
 SPECIAL_ARRAYS = {
     "nk" => {
         random:   [ [90, 10], [111111190, 111111110] ],
@@ -117,8 +115,8 @@ private
 
 
     def isException(num)
-        exceptions = SORT_EXCEPTIONS[self.name];
-        return exceptions && (exceptions[@@type.to_s] || 10**10) <= num
+        max = Util.config[self.name]["no_run"][@@type.to_s]
+        return max && max <= num
     end
 
 end

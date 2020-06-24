@@ -1,4 +1,9 @@
 class Util
+    @@SORT_CONFIG = JSON.parse( File.read("sort_config.json") )
+
+    def self.config
+        return @@SORT_CONFIG
+    end
 
     def self.time(&proc)
         t1 = Time.now

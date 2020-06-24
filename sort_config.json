@@ -1,0 +1,78 @@
+{
+    "Bucket": {
+        "data_exceptions": [
+            "strings"
+        ],
+        "no_run": {}
+    },
+    "InPlaceInsertion": {
+        "data_exceptions": [],
+        "no_run": {
+            "reversed": 100000
+        }
+    },
+    "Insertion": {
+        "data_exceptions": [],
+        "no_run": {}
+    },
+    "InsertionStringRadix": {
+        "data_exceptions": [
+            "random",
+            "sorted",
+            "reversed",
+            "floats"
+        ],
+        "no_run": {}
+    },
+    "LSDRadix": {
+        "data_exceptions": [
+            "strings"
+        ],
+        "no_run": {}
+    },
+    "Merge": {
+        "data_exceptions": [],
+        "no_run": {}
+    },
+    "MSDRadix": {
+        "data_exceptions": [
+            "strings"
+        ],
+        "no_run": {}
+    },
+    "Pigeonhole": {
+        "data_exceptions": [
+            "floats",
+            "strings"
+        ],
+        "no_run": {}
+    },
+    "Quick": {
+        "data_exceptions": [],
+        "no_run": {
+            "sorted": 10000,
+            "reversed": 10000
+        }
+    },
+    "RandomQuick": {
+        "data_exceptions": [],
+        "no_run": {}
+    },
+    "Ruby": {
+        "data_exceptions": [],
+        "no_run": {}
+    },
+    "Shell": {
+        "data_exceptions": [],
+        "no_run": {}
+    },
+    "StringRadix": {
+        "data_exceptions": [
+            "random",
+            "sorted",
+            "reversed",
+            "floats"
+        ],
+        "no_run": {}
+    }
+}
