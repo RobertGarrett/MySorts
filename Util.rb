@@ -1,5 +1,7 @@
-class Util
+require "faker"
+require "json"
 
+class Util
     @@SORT_CONFIG = JSON.parse( File.read("sort_config.json") )
     @@special_vals = {
         "nk" => {

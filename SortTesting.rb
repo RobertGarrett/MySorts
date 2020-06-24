@@ -24,23 +24,11 @@ end
 
 def delegate(option)
     case option
-    when 0; DATA_TYPES.each { |type| run_tests(type) }
-        when 1,2,3,4,5; run_tests( DATA_TYPES[option-1] )
+    when 0; DATA_TYPES.each { |type| Timer.run(type) }
+    when 1,2,3,4,5; Timer.run( DATA_TYPES[option-1] )
         else; puts "!--- Invalid Selection ---!"
     end
 end
-
-def run_tests(type)
-    Timer.header(type)
-    config = Util.config
-    sorts = config["Sort_Order"].reject do |sort|
-        config["Sorts"][sort]["data_exceptions"].include?(type.to_s)
-    end
-    sorts = sorts.map { |sort| Object.const_get(sort) }
-    sorts.each { |sort| sort.time_all }
-end
-
-
 
 exit = false
 while !exit

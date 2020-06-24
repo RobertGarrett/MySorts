@@ -1,6 +1,5 @@
-require "faker"
-require "byebug"
 require_relative "./Util"
+require "byebug"
 
 
 module Timer
@@ -9,14 +8,20 @@ module Timer
     @@type = nil
 
 
-    def self.header(type)
+    def self.run(type)
         @@type = type
         header = "_"*@@len_1
         [100, 1000, 10000, 100000].each do |size|
             header += "|_" + ("%-#{@@len_2}s" % "n=#{size}").gsub(' ', "_")
         end
-
         puts "\n\n" + header + "|__________________#{type.to_s.upcase}"
+
+        config = Util.config
+        sorts = config["Sort_Order"].reject do |sort|
+            config["Sorts"][sort]["data_exceptions"].include?(type.to_s)
+        end
+        sorts = sorts.map { |sort| Object.const_get(sort) }
+        sorts.each { |sort| sort.time_all }
     end
 
     def time_all

@@ -1,5 +1,4 @@
 require_relative "../Timer"
-require "byebug"
 
 class Pigeonhole
     extend Timer
