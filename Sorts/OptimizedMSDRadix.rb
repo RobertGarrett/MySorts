@@ -1,12 +1,9 @@
 require_relative '../Timer'
-require_relative './Insertion'
-require "byebug"
-class MSDRadix
+require_relative 'Insertion.rb'
+
+class OptimizedMSDRadix
     extend Timer
 
-    # Due to Float rounding errors, there may be some inaccuracies after using
-    # the radix sort. To eliminate these, we utilize an insertion sort
-    # since it is ~O(n) for nearly sorted arrays.
     def self.sort(arr)
         return arr if arr.length <= 1
         is_str_arr = arr.all? { |e| e.instance_of?(String) }
@@ -40,7 +37,9 @@ class MSDRadix
     end
 
     def self.counting_sort_nums(arr, exp)
-        if (0...arr.length).all?{ |i| arr[i] == arr[0] }
+        if arr.length <= 10
+            return Insertion.sort(arr), true
+        elsif (0...arr.length).all?{ |i| arr[i] == arr[0] }
             return arr, true
         end
 
@@ -54,9 +53,10 @@ class MSDRadix
         return bkts.reverse, false
     end
 
-
     def self.counting_sort_strings(arr, n)
-        if (0...arr.length).all?{ |i| arr[i] == arr[0] }
+        if arr.length <= 10
+            return Insertion.sort(arr), true
+        elsif (0...arr.length).all?{ |i| arr[i] == arr[0] }
             return arr, true
         end
 
@@ -87,5 +87,66 @@ class MSDRadix
 
         return stack, false
     end
+
+
+
+
+
+
+
+    # def self.sort(arr)
+    #     return arr if arr.length <= 1
+    #
+    #     final = []
+    #     array_stack = [arr]
+    #     idx_stack = [0]
+    #
+    #     while array_stack.length > 0
+    #         idx = idx_stack.pop
+    #         result, add = counting_sort(array_stack.pop, idx)
+    #         if(add)
+    #             final.push(*result)
+    #         else
+    #             array_stack.push(*result)
+    #             idx_stack.push(*Array.new(result.length, idx+1))
+    #         end
+    #     end
+    #     return final
+    # end
+    #
+    # def self.counting_sort(arr, n)
+    #     if arr.length <= 10
+    #         return Insertion.sort(arr), true
+    #     elsif (0...arr.length).all?{ |i| arr[i] == arr[0] }
+    #         return arr, true
+    #     end
+    #
+    #     bkts = Hash.new { |h, k| h[k] = [] }
+    #     nils = []
+    #     add_to_buckets(bkts, arr, nils, n)
+    #
+    #     return get_stack_additions(bkts, nils)
+    # end
+    #
+    # def self.add_to_buckets(bkts, arr, nils, n)
+    #     arr.each do |item|
+    #         if item[n]
+    #             bkts[ item[n] ] << item
+    #         else
+    #             nils << item
+    #         end
+    #     end
+    # end
+    # 
+    # def self.get_stack_additions(bkts, nils)
+    #     stack = []
+    #     keys = bkts.keys.sort { |k1, k2| k2 <=> k1 } # Ruby uses a QuickSort in C
+    #     keys.each do |char|
+    #         stack << bkts[char] if bkts[char].length >= 1
+    #     end
+    #     stack << nils if nils.length >= 1
+    #
+    #     return stack, false
+    # end
 
 end

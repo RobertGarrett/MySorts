@@ -3,26 +3,6 @@ require "byebug"
 require_relative "./Util"
 
 
-
-SPECIAL_ARRAYS = {
-    "nk" => {
-        random:   [ [90, 10], [111111190, 111111110] ],
-        sorted:   [ [10, 90], [111111110, 111111190] ],
-        reversed: [ [90, 10], [111111190, 111111110] ],
-        floats:   [ [9.0, 1.0], [11111119.0, 11111111.0] ],
-        strings:  [ ["zz", "aa"], ["aaaaaaazz", "aaaaaaaaa"]]
-    },
-    "n+k" => {
-        random:   [ [10000, 0], [1000000, 0] ],
-        sorted:   [ [0, 10000], [0, 1000000] ],
-        reversed: [ [10000, 0], [1000000, 0] ],
-        floats:   [ [10000.0, 0.0], [1000000.0, 0.0] ],
-        strings:  [ ["abcde", "a"], ["abcdefg", "a"] ]
-    }
-}
-
-
-
 module Timer
     @@len_1 = 25
     @@len_2 = 13
@@ -32,10 +12,9 @@ module Timer
     def self.header(type)
         @@type = type
         header = "_"*@@len_1
-        header += "|_" + ("%-#{@@len_2}s" % 'n=100').gsub(' ', "_")
-        header += "|_" + ("%-#{@@len_2}s" % 'n=10^3').gsub(' ', "_")
-        header += "|_" + ("%-#{@@len_2}s" % 'n=10^4').gsub(' ', "_")
-        header += "|_" + ("%-#{@@len_2}s" % 'n=10^5').gsub(' ', "_")
+        [100, 1000, 10000, 100000].each do |size|
+            header += "|_" + ("%-#{@@len_2}s" % "n=#{size}").gsub(' ', "_")
+        end
 
         puts "\n\n" + header + "|__________________#{type.to_s.upcase}"
     end
@@ -78,7 +57,6 @@ private
             time = v.nil? ? "-"*(@@len_2-3) : "%#{@@len_2-3}.3f" % (v)
             output += "| #{time} ms"
         end
-        times
         puts output + "|  ~ #{get_big_O(times)}"
     end
 
@@ -88,9 +66,9 @@ private
         range = (0...ratios.length)
 
         comparisons = {
-            "n" =>       Util.avg( range.map { |i| ratios[i] / 10 } ),
-            "nlog(n)" => Util.avg( range.map { |i| ratios[i] / Util.log_scale(i) } ),
-            "n^2" =>     Util.avg( range.map { |i| ratios[i] / 100 } )
+            "n" =>       Util.wght_avg( range.map { |i| ratios[i] / 10 } ),
+            "nlog(n)" => Util.wght_avg( range.map { |i| ratios[i] / Util.log_scale(i) } ),
+            "n^2" =>     Util.wght_avg( range.map { |i| ratios[i] / 100 } )
         }
         min = comparisons.min_by { |k, v| (v + 1/v)/2.0 }
 
@@ -101,21 +79,20 @@ private
     end
 
     def test_nk()
-        arr1, arr2 = SPECIAL_ARRAYS["nk"][@@type]
+        arr1, arr2 = Util.make_special_arrays(100, "nk", @@type)
         timed_ratio = time( arr2.clone )/time( arr1.clone )
         return timed_ratio >= 2.0
     end
 
     def test_n_plus_k()
         return false if @@type == :strings
-        arr1, arr2 = SPECIAL_ARRAYS["n+k"][@@type]
+        arr1, arr2 = Util.make_special_arrays(100, "n+k", @@type)
         timed_ratio = time( arr2.clone )/time( arr1.clone )
-        return timed_ratio >= 10.0
+        return timed_ratio >= 2.0
     end
 
-
     def isException(num)
-        max = Util.config[self.name]["no_run"][@@type.to_s]
+        max = Util.config["Sorts"][self.name]["no_run"][@@type.to_s]
         return max && max <= num
     end
 

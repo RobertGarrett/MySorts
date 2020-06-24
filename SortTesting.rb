@@ -1,14 +1,13 @@
-# Load all ruby files (except self) in current directory
+# Load all ruby sort files
 files = Dir.children("./Sorts")
 files.each { |file| require_relative "./Sorts/#{file}" }
 require_relative "./Util"
 
 
-
 DATA_TYPES = [:random, :sorted, :reversed, :floats, :strings]
 
 OPTIONS = ["0) All"]
-DATA_TYPES.each_with_index.map do |type, idx|
+DATA_TYPES.each_with_index do |type, idx|
     OPTIONS << "#{idx+1}) #{type.to_s.capitalize}"
 end
 
@@ -16,8 +15,10 @@ end
 
 def get_option
     puts "\nTesting Options:\n"
-    OPTIONS.each { |opt| puts "     #{opt}" }
-    print "Your Selection (-1 to exit): "
+    puts "______________________________\n\n"
+    OPTIONS.each { |opt| puts "\t#{opt}" }
+    puts "______________________________"
+    print "\nYour Selection (-1 to exit): "
     return gets.chomp
 end
 
@@ -31,8 +32,11 @@ end
 
 def run_tests(type)
     Timer.header(type)
-    sorts = Util.config.reject { |k, v| v["data_exceptions"].include?(type.to_s) }
-    sorts = sorts.keys.map { |sort| Object.const_get(sort) }
+    config = Util.config
+    sorts = config["Sort_Order"].reject do |sort|
+        config["Sorts"][sort]["data_exceptions"].include?(type.to_s)
+    end
+    sorts = sorts.map { |sort| Object.const_get(sort) }
     sorts.each { |sort| sort.time_all }
 end
 
