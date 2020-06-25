@@ -50,7 +50,7 @@ class Util
         max = 100000
         case type
             when :random
-                 return Array.new(n){ rand(1...max) }
+                 return Array.new(n){ rand(-max...max) }
             when :sorted
                  return (1..n).to_a
             when :reversed
@@ -58,7 +58,7 @@ class Util
             when :floats
                  return Array.new(n){ rand(0.0...max).round(3) }
             when :strings
-                 return Array.new(n){ rand_string(100) }
+                 return Array.new(n){ rand_string( rand() < 0.5 ? 100 : rand(1..100) ) }
         end
     end
 

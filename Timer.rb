@@ -84,14 +84,14 @@ private
     end
 
     def test_nk()
-        arr1, arr2 = Util.make_special_arrays(100, "nk", @@type)
+        arr1, arr2 = Util.make_special_arrays(1000, "nk", @@type)
         timed_ratio = time( arr2.clone )/time( arr1.clone )
         return timed_ratio >= 2.0
     end
 
     def test_n_plus_k()
         return false if @@type == :strings
-        arr1, arr2 = Util.make_special_arrays(100, "n+k", @@type)
+        arr1, arr2 = Util.make_special_arrays(1000, "n+k", @@type)
         timed_ratio = time( arr2.clone )/time( arr1.clone )
         return timed_ratio >= 2.0
     end
