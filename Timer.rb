@@ -63,7 +63,7 @@ private
     end
 
     def get_big_O(times)
-        vals = times.values.reject { |val| !val }
+        vals = times.values.reject(&:nil?)
         ratios = (0...vals.length-1).map { |i| vals[i+1] / vals[i] }
         range = (0...ratios.length)
 
@@ -83,15 +83,13 @@ private
     def test_nk()
         arr1, arr2 = Util.make_special_arrays(100, "nk", @@type)
         timed_ratio = time( arr2.clone )/time( arr1.clone )
-        print "nk: #{timed_ratio.round(3)} - "
         return timed_ratio
     end
 
     def test_n_plus_k()
-        return false if @@type == :strings
+        return 0.0 if @@type == :strings
         arr1, arr2 = Util.make_special_arrays(100, "n+k", @@type)
         timed_ratio = time( arr2.clone )/time( arr1.clone )
-        print "n+k: #{timed_ratio.round(3)}   "
         return timed_ratio
     end
 
