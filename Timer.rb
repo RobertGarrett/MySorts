@@ -24,30 +24,27 @@ module Timer
         sorts.each { |sort| sort.time_all }
     end
 
-    def time_all
+    def time_all()
         times = { 100 => nil, 1000 => nil, 10000 => nil, 100000 => nil}
         times.each do |k, v|
             break if isException(k)
-            times[k] = time( Util.make_array(k, @@type), 5 )
+            times[k] = time( Util.make_array(k, @@type) )
         end
         self.print_results(times)
     end
 
-    def time(to_sort, num_times = 5)
-        total = 0
+    def time(to_sort, num_times = 5, total = 0)
         num_times.times do
-            arr = to_sort.clone
-            time_hash = Util.time{ self.sort(arr) }
+            time_hash = Util.time{ self.sort(to_sort.clone) }
 
-            if arr.sort != time_hash[:val]
-                comp = arr.sort.reject { |e| time_hash[:val] == e}
+            unless Util.sorted?( time_hash[:val] )
                 puts "#{("%-#{@@len_1}s" % self.name).gsub(' ', '-')} FAILED"
                 debugger
                 return
             end
             total += time_hash[:time]
         end
-        return total / 5
+        return total / num_times
     end
 
 
@@ -78,22 +75,24 @@ private
         min = comparisons.min_by { |k, v| (v + 1/v)/2.0 }
 
         return min[0] if min[0] != "n"
-        return "n+k" if self.test_n_plus_k
-        return "nk" if self.test_nk
-        return "n"
+        special = { "nk" => test_nk(), "n+k" => test_n_plus_k() }
+        max = special.max_by{ |k, v| v }
+        return max[1] >= 2.0 ? max[0] : "n"
     end
 
     def test_nk()
-        arr1, arr2 = Util.make_special_arrays(1000, "nk", @@type)
+        arr1, arr2 = Util.make_special_arrays(100, "nk", @@type)
         timed_ratio = time( arr2.clone )/time( arr1.clone )
-        return timed_ratio >= 2.0
+        print "nk: #{timed_ratio.round(3)} - "
+        return timed_ratio
     end
 
     def test_n_plus_k()
         return false if @@type == :strings
-        arr1, arr2 = Util.make_special_arrays(1000, "n+k", @@type)
+        arr1, arr2 = Util.make_special_arrays(100, "n+k", @@type)
         timed_ratio = time( arr2.clone )/time( arr1.clone )
-        return timed_ratio >= 2.0
+        print "n+k: #{timed_ratio.round(3)}   "
+        return timed_ratio
     end
 
     def isException(num)

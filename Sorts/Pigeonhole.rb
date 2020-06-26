@@ -5,9 +5,12 @@ class Pigeonhole
 
     def self.sort(arr)
         min, max = [arr.min, arr.max]
-        phole = Array.new(max - min + 1){Array.new}
-        arr.each { |e| phole[e-min] << e }
-        return phole.flatten
+        phole = Array.new(max - min + 1){nil}
+        arr.each do|e|
+            phole[e-min] = [] unless phole[e-min]
+            phole[e-min] << e
+        end
+        return phole.flatten.compact
     end
 
 end

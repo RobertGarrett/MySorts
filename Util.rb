@@ -38,7 +38,13 @@ class Util
         return [arr1, arr2]
     end
 
-
+    def self.sorted?(arr)
+        return true if arr.length <= 1
+        (1...arr.length).each do |i|
+            return false if arr[i] < arr[i-1]
+        end
+        return true
+    end
 
     def self.time(&proc)
         t1 = Time.now

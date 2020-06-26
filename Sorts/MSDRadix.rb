@@ -5,36 +5,49 @@ require "byebug"
 class MSDRadix
     extend Timer
 
+    @@optimizer = nil
+    @@min_length = nil
+    @@type = nil
+
     # Due to Float rounding errors, there may be some inaccuracies after using
     # the radix sort. To eliminate these, we utilize an insertion sort
     # since it is ~O(n) for nearly sorted arrays.
-    def self.sort(arr)
-        return arr if arr.length <= 1
-        is_str_arr = arr.all? { |e| e.instance_of?(String) }
+    def self.sort( arr, opts = {} )
+        @@optimizer = opts[:optimizer]
+        @@min_length = opts[:min_length]
 
-        positives = arr.reject { |e| e < 0 }
-        negatives = arr - positives
-        if positives.size > 1
-            positives = sort_helper(positives, is_str_arr)
-        end
-        if negatives.size > 1
-            negatives = sort_helper(negatives, is_str_arr)
-        end
+        @@type = arr[0].is_a?(Numeric) ? Numeric : arr[0].class
+        all_same_type = arr.all? { |e| e.is_a?(@@type) }
 
-        # Note that sense -3 % 10 = 10-3 = 7, the negatives array is already
-        # sorted backwards, so there is no need to reverse it.
-        return Insertion.sort( negatives + positives )
+        return arr if arr.length <= 1 || !all_same_type
+
+        if @@type == Numeric
+            positives = arr.reject { |e| e < 0 }
+            negatives = arr - positives
+
+            if positives.size > 1
+                positives = sort_partial(positives)
+            end
+            if negatives.size > 1
+                negatives = sort_partial(negatives)
+            end
+
+            # Note that sense -3 % 10 = 10-3 = 7, the negatives array is already
+            # sorted backwards, so there is no need to reverse it.
+            return Insertion.sort( negatives + positives )
+        else
+            return @@type != String ? arr : sort_partial(arr)
+        end
     end
 
-    def self.sort_helper(arr, is_str_arr)
-        final, arr_stack, idx_stack = [ [], [arr], get_max(arr, is_str_arr) ]
-
-        dir = is_str_arr ? 1 : -1
-        counting_sort = self.method( is_str_arr ? :counting_sort_strings : :counting_sort_nums )
+    def self.sort_partial(arr)
+        final, arr_stack = [ [], [arr] ]
+        idx_stack = [ @@type == String ? 0 : get_start(arr)]
+        dir = @@type == String ? 1 : -1
 
         while arr_stack.length > 0
             idx = idx_stack.pop
-            result, add = counting_sort.call(arr_stack.pop, idx)
+            result, add = sort_delegator(arr_stack.pop, idx)
             if add
                 final.push(*result)
             else
@@ -45,27 +58,28 @@ class MSDRadix
         return final
     end
 
-    def self.get_max(arr, is_str_arr)
-        idx_stack = []
-        if is_str_arr
-            idx_stack << 0
-        else
-            max_str = [arr.min.abs, arr.max.abs].max.abs.to_s
-            max = max_str.split(".").inject(0) { |acc, s| acc += s.length }
-            idx_stack << max - 1
-        end
-        return idx_stack
+    def self.get_start(arr)
+        return [arr.min.abs, arr.max.abs].max.to_i.to_s.length - 1
     end
 
-    def self.counting_sort_nums(arr, exp)
-        if (0...arr.length).all?{ |i| arr[i] == arr[0] }
+
+
+    def self.sort_delegator(arr, exp)
+        if @@optimizer && arr.length <= @@min_length
+            return @@optimizer.call(arr), true
+        elsif (0...arr.length).all?{ |i| arr[i] == arr[0] }
             return arr, true
+        else
+            return sort_strings(arr, exp) if @@type == String
+            return sort_nums(arr, exp)
         end
+    end
 
+
+
+    def self.sort_nums(arr, exp)
         bkts = Array.new(10){ Array.new }
-
-        n = 10**exp
-        m = 10*n
+        n, m = [ 10**exp, 10**(exp+1) ]
 
         arr.each { |e| bkts[(e%m)/n] << e }
         bkts.reject! { |bucket| bucket.empty?}
@@ -73,15 +87,11 @@ class MSDRadix
     end
 
 
-    def self.counting_sort_strings(arr, n)
-        if (0...arr.length).all?{ |i| arr[i] == arr[0] }
-            return arr, true
-        end
 
+    def self.sort_strings(arr, n)
         bkts = Hash.new { |h, k| h[k] = [] }
         nils = []
         add_to_buckets(bkts, arr, nils, n)
-
         return get_stack_additions(bkts, nils)
     end
 
