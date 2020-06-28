@@ -6,6 +6,7 @@
         "Insertion",
         "Shell",
         "InPlaceInsertion",
+        "Selection",
         "Bucket",
         "Pigeonhole",
         "LSDRadix",
@@ -68,6 +69,16 @@
         "Shell": {
             "data_exceptions": [],
             "no_run": {}
+        },
+        "Selection": {
+            "data_exceptions": [],
+            "no_run": {
+                "random": 10000,
+                "sorted": 10000,
+                "reversed": 10000,
+                "floats": 10000,
+                "strings": 10000
+            }
         }
     }
 }

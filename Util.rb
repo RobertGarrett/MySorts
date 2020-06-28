@@ -64,7 +64,7 @@ class Util
             when :floats
                  return Array.new(n){ rand(0.0...max).round(3) }
             when :strings
-                 return Array.new(n){ rand_string( rand() < 0.5 ? 100 : rand(1..100) ) }
+                 return Array.new(n){ rand_string( rand() < 0.5 ? 3 : rand(1..3) ) }
         end
     end
 
