@@ -25,22 +25,18 @@ class MSDRadix
             positives = arr.reject { |e| e < 0 }
             negatives = arr - positives
 
-            if positives.size > 1
-                positives = sort_partial(positives)
-            end
-            if negatives.size > 1
-                negatives = sort_partial(negatives)
-            end
-
             # Note that sense -3 % 10 = 10-3 = 7, the negatives array is already
             # sorted backwards, so there is no need to reverse it.
-            return Insertion.sort( negatives + positives )
+            arr = sort_main(negatives) + sort_main(positives)
+            return Insertion.sort( arr )
         else
-            return @@type != String ? arr : sort_partial(arr)
+            return @@type != String ? arr : sort_main(arr)
         end
     end
 
-    def self.sort_partial(arr)
+    def self.sort_main(arr)
+        return arr if arr.length <= 1
+
         final, arr_stack = [ [], [arr] ]
         idx_stack = [ @@type == String ? 0 : get_start(arr)]
         dir = @@type == String ? 1 : -1
@@ -65,10 +61,10 @@ class MSDRadix
 
 
     def self.sort_delegator(arr, exp)
-        if @@optimizer && arr.length <= @@min_length
-            return @@optimizer.call(arr), true
-        elsif (0...arr.length).all?{ |i| arr[i] == arr[0] }
+        if (0...arr.length).all?{ |i| arr[i] == arr[0] }
             return arr, true
+        elsif @@optimizer && arr.length <= @@min_length
+            return @@optimizer.call(arr), true
         else
             return sort_strings(arr, exp) if @@type == String
             return sort_nums(arr, exp)
@@ -91,29 +87,14 @@ class MSDRadix
     def self.sort_strings(arr, n)
         bkts = Hash.new { |h, k| h[k] = [] }
         nils = []
-        add_to_buckets(bkts, arr, nils, n)
-        return get_stack_additions(bkts, nils)
-    end
 
-    def self.add_to_buckets(bkts, arr, nils, n)
         arr.each do |item|
-            if item[n]
-                bkts[ item[n] ] << item
-            else
-                nils << item
-            end
+            sig = item[n]
+            bkt = sig ? bkts[sig] : nils
+            bkt << item
         end
-    end
-
-    def self.get_stack_additions(bkts, nils)
-        stack = []
-        keys = bkts.keys.sort { |k1, k2| k2 <=> k1 } # Ruby uses a QuickSort
-        keys.each do |char|
-            stack << bkts[char] if bkts[char].length != 0
-        end
-        stack << nils if nils.length >= 1
-
-        return stack, false
+        bkts = bkts.sort_by { |k, v| k }.to_h.values
+        return bkts.reverse + [nils], false
     end
 
 end

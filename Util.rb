@@ -60,11 +60,11 @@ class Util
             when :sorted
                  return (1..n).to_a
             when :reversed
-                return (1..n).to_a.reverse
+                 return (1..n).to_a.reverse
             when :floats
                  return Array.new(n){ rand(0.0...max).round(3) }
             when :strings
-                 return Array.new(n){ rand_string( rand() < 0.5 ? 3 : rand(1..3) ) }
+                 return Array.new(n){ rand_string( rand(1..100) ) }
         end
     end
 

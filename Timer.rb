@@ -3,7 +3,7 @@ require "byebug"
 
 
 module Timer
-    @@len_1 = 25
+    @@len_1 = 5 + Util.config["Sort_Order"].max_by(&:length).length
     @@len_2 = 13
     @@type = nil
 
@@ -11,7 +11,7 @@ module Timer
     def self.run(type)
         @@type = type
         header = "_"*@@len_1
-        [100, 1000, 10000, 100000].each do |size|
+        [10, 100, 1000, 10000, 100000].each do |size|
             header += "|_" + ("%-#{@@len_2}s" % "n=#{size}").gsub(' ', "_")
         end
         puts "\n\n" + header + "|__________________#{type.to_s.upcase}"
@@ -25,7 +25,7 @@ module Timer
     end
 
     def time_all()
-        times = { 100 => nil, 1000 => nil, 10000 => nil, 100000 => nil}
+        times = { 10 => nil, 100 => nil, 1000 => nil, 10000 => nil, 100000 => nil}
         times.each do |k, v|
             break if isException(k)
             times[k] = time( Util.make_array(k, @@type) )
