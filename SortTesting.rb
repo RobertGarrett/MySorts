@@ -2,35 +2,46 @@
 files = Dir.children("./Sorts")
 files.each { |file| require_relative "./Sorts/#{file}" }
 require_relative "./Util"
+require_relative "./Config"
 
 
-DATA_OPTIONS = ["0) All"]
-Util.DATA_TYPES.each_with_index do |type, idx|
-    DATA_OPTIONS << "#{idx+1}) #{type.to_s.capitalize}"
-end
+DATA_OPTIONS = Config.OPTIONS(:data)
+# Util.DATA_TYPES.each_with_index do |type, idx|
+#     DATA_OPTIONS << "\t#{idx+1}) #{type.to_s.capitalize}"
+# end
 
-SORT_OPTIONS = []
-Util.CONFIG["sort_order"].each_with_index do |sort, idx|
-    SORT_OPTIONS << "#{idx}) #{sort}"
-end
+SORT_OPTIONS = Config.OPTIONS(:sort)
+
 
 @options = nil
 
+def cli_loop()
+    exit = false
+    while !exit
+        option = get_option()
+        break if option == "-1"
+        delegate( option )
+    end
+    puts ""
+end
 
 def get_option
-    print "\nSort by type(t), class(c)? "
-    @options = gets.chomp == "t" ? DATA_OPTIONS : SORT_OPTIONS
-    puts "Testing Options:\n"
-    puts "______________________________\n\n"
-    @options.each { |opt| puts "\t#{opt}" }
-    puts "______________________________"
-    print "\nYour Selection (-1 to exit): "
+    print "\nSort by type(t), class(c) or exit(-1)? "
+    choice = gets.chomp
+    return "-1" if choice == "-1"
+
+    @options = choice == "t" ? DATA_OPTIONS : SORT_OPTIONS
+    print_options()
     return gets.chomp
 end
 
-def handle_option
-    response = gets.chomp
-
+def print_options()
+    #puts "Testing Options:\n"
+    puts "#{"_"*50}\n\n"
+    @options.each do |opt|
+        puts "#{opt}"
+    end
+    print "#{"_"*50}\n\nYour Selection (-1 to exit): "
 end
 
 def delegate(option)
@@ -42,22 +53,17 @@ def delegate(option)
     option = Integer(option)
     if @options == DATA_OPTIONS
         if option == 0
-            Util.DATA_TYPES.each { |type| Timer.run(type) }
+            Config.DATA_TYPES.each { |type| Timer.run(type) }
             return
         elsif option <= DATA_OPTIONS.length
-            Timer.run( Util.DATA_TYPES[option-1] )
+            Timer.run( Config.DATA_TYPES[option-1] )
         else
             puts "!--- Invalid Selection ---!"
         end
     else
-        Timer.run( Util.CONFIG["sort_order"][option] )
+        Timer.run( Config.CONFIG["sort_order"][option] )
     end
 end
 
-exit = false
-while !exit
-    option = get_option()
-    break if option == "-1"
-    delegate( option )
-end
-puts ""
+
+cli_loop()

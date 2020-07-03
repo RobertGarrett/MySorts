@@ -1,9 +1,10 @@
 require_relative "./Util"
+require_relative "./Config"
 require "byebug"
 
 
 module Timer
-    @@len_1 = 5 + Util.CONFIG["sort_order"].max_by(&:length).length
+    @@len_1 = 5 + Config.CONFIG["sort_order"].max_by(&:length).length
     @@len_2 = 13
 
     def self.run(sym)
@@ -13,18 +14,13 @@ module Timer
         end
         puts "\n\n" + header + "|__________________#{sym.to_s.upcase}"
 
-        if Util.DATA_TYPES.include?(sym)
-            @@type_run = true
-            run_by_data_type(sym)
-        else
-            @@type_run = false
-            run_by_sort(sym)
-        end
+        @@type_run = Config.DATA_TYPES.include?(sym)
+        @@type_run ? run_by_data_type(sym) : run_by_sort(sym)
     end
 
     def self.run_by_data_type(type)
         @@type = type
-        config = Util.CONFIG
+        config = Config.CONFIG
         sorts = config["sort_order"].reject do |sort|
             config["sorts"][sort]["data_exceptions"].include?(type.to_s)
         end
@@ -34,31 +30,14 @@ module Timer
 
     def self.run_by_sort(sort)
         clazz = Object.const_get(sort.to_s)
-        exceptions = Util.CONFIG["sorts"][sort.to_s]["data_exceptions"]
-        types = Util.DATA_TYPES - exceptions.map(&:to_sym)
+        exceptions = Config.CONFIG["sorts"][sort.to_s]["data_exceptions"]
+        types = Config.DATA_TYPES - exceptions.map(&:to_sym)
 
         types.each do |type|
             @@type = type
             clazz.time_all
         end
     end
-
-
-    # def self.run(type)
-    #     @@type = type
-    #     header = "_"*@@len_1
-    #     [10, 100, 1000, 10000, 100000].each do |size|
-    #         header += "|_" + ("%-#{@@len_2}s" % "n=#{size}").gsub(' ', "_")
-    #     end
-    #     puts "\n\n" + header + "|__________________#{type.to_s.upcase}"
-    #
-    #     config = Util.config
-    #     sorts = config["sort_order"].reject do |sort|
-    #         config["sorts"][sort]["data_exceptions"].include?(type.to_s)
-    #     end
-    #     sorts = sorts.map { |sort| Object.const_get(sort) }
-    #     sorts.each { |sort| sort.time_all }
-    # end
 
     def time_all()
         times = { 10 => nil, 100 => nil, 1000 => nil, 10000 => nil, 100000 => nil}
@@ -131,7 +110,7 @@ private
     end
 
     def isException(num)
-        max = Util.CONFIG["sorts"][self.name]["no_run"][@@type.to_s]
+        max = Config.CONFIG["sorts"][self.name]["no_run"][@@type.to_s]
         return max && max <= num
     end
 

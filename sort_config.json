@@ -80,5 +80,35 @@
                 "strings": 10000
             }
         }
+    },
+    "special_arrays": {
+        "nk": {
+            "default": {
+                "small": [ 10, 90],
+                "large": [ 111111110, 111111190]
+            },
+            "floats": {
+                "small": [ 9.0, 1.0],
+                "large": [ 11111119.0, 11111111.0]
+            },
+            "strings": {
+                "small": ["zz", "aa"],
+                "large": ["aaaaaaazz", "aaaaaaaaa"]
+            }
+        },
+        "n+k": {
+            "default": {
+                "small": [10000, 0],
+                "large": [1000000, 0]
+            },
+            "floats": {
+                "small": [10000.0, 0.0],
+                "large": [1000000.0, 0.0]
+            },
+            "strings": {
+                "small": ["abcde", "a"],
+                "large": ["abcdefg", "a"] 
+            }
+        }
     }
 }
