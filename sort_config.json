@@ -1,5 +1,5 @@
 {
-    "Sort_Order": [
+    "sort_order": [
         "Quick",
         "RandomQuick",
         "Merge",
@@ -13,7 +13,7 @@
         "MSDRadix",
         "OptimizedMSDRadix"
     ],
-    "Sorts": {
+    "sorts": {
         "Bucket": {
             "data_exceptions": [
                 "strings"

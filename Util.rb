@@ -2,7 +2,9 @@ require "faker"
 require "json"
 
 class Util
-    @@SORT_CONFIG = JSON.parse( File.read("sort_config.json") )
+    @@DATA_TYPES = [:random, :sorted, :reversed, :floats, :strings]
+    @@CONFIG = JSON.parse( File.read("sort_config.json") )
+    
     @@special_vals = {
         "nk" => {
             default: { small:    [ 10, 90], large:    [ 111111110, 111111190] },
@@ -19,9 +21,11 @@ class Util
     @@special_vals["n+k"].default = @@special_vals["n+k"][:default]
 
 
-
-    def self.config
-        return @@SORT_CONFIG
+    def self.DATA_TYPES
+        return @@DATA_TYPES
+    end
+    def self.CONFIG
+        return @@CONFIG
     end
 
     def self.make_special_arrays(size, t1, t2)
