@@ -4,23 +4,21 @@ class Config
     @@CONFIG = JSON.parse( File.read("sort_config.json") )
     @@DATA_TYPES = [:random, :sorted, :reversed, :floats, :strings]
 
+    def self.OPTIONS(sym); @@OPTIONS[sym]; end
     def self.DATA_TYPES; @@DATA_TYPES; end
     def self.CONFIG; @@CONFIG; end
-    def self.OPTIONS(sym)
-        return @@OPTIONS[sym]
-    end
 
     def self.create_data_options
-        options = ["0) All"]
+        opts = ["\t0) All"]
         @@DATA_TYPES.each_with_index do |type, idx|
-            options << "\t#{idx+1}) #{type.to_s.capitalize}"
+            opts << "\t#{idx+1}) #{type.to_s.capitalize}"
         end
-        return options
+        return opts
     end
 
     def self.create_sort_options
         sorts = @@CONFIG["sort_order"]
-        options = []
+        opts = []
 
         even_elmnts = (0...sorts.size).step(2).map { |i| sorts[i] }
         max = even_elmnts.max_by(&:length).length
@@ -31,9 +29,9 @@ class Config
             if i+1 < sorts.size
                 opt2 = "#{"%2s" % (i+1).to_s}) #{sorts[i+1]}"
             end
-            options << "\t#{opt1}|  #{opt2}"
+            opts << "\t#{opt1}|  #{opt2}"
         end
-        return options
+        return opts
     end
 
 

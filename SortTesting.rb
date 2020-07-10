@@ -6,12 +6,17 @@ require_relative "./Config"
 
 
 DATA_OPTIONS = Config.OPTIONS(:data)
-# Util.DATA_TYPES.each_with_index do |type, idx|
-#     DATA_OPTIONS << "\t#{idx+1}) #{type.to_s.capitalize}"
-# end
-
 SORT_OPTIONS = Config.OPTIONS(:sort)
 
+# arr = Util.make_array(1000000, :random)
+# arr1, arr2 = [arr.clone, arr.clone]
+# t1 = Util.time do
+#     arr1 = arr1[0...7] + [0] + arr1[7..-1]
+# end
+# t2 = Util.time do
+#     arr2.insert(7, 0)
+# end
+# print "#{t1[:time]} / #{t2[:time]}"
 
 @options = nil
 

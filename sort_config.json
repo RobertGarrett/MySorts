@@ -1,5 +1,6 @@
 {
     "sort_order": [
+        "ReducedLSDRadix",
         "Quick",
         "RandomQuick",
         "Merge",
@@ -79,6 +80,13 @@
                 "floats": 10000,
                 "strings": 10000
             }
+        },
+        "ReducedLSDRadix": {
+            "data_exceptions": [
+                "floats",
+                "strings"
+            ],
+            "no_run": {}
         }
     },
     "special_arrays": {
@@ -107,7 +115,7 @@
             },
             "strings": {
                 "small": ["abcde", "a"],
-                "large": ["abcdefg", "a"] 
+                "large": ["abcdefg", "a"]
             }
         }
     }

@@ -14,6 +14,7 @@ class Selection
             end
 
             # Since min is swapped first, the index of max will move to min
+            # IF the max is at the current index (i)
             max = min if i == max
             arr[min],    arr[i] = arr[i],    arr[min]
             arr[max], arr[-i-1] = arr[-i-1], arr[max]

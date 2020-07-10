@@ -39,7 +39,7 @@ class Util
 
 
     def self.make_array(n, type)
-        max = 100000
+        max = 1000000
         case type
             when :random
                  return Array.new(n){ rand(-max...max) }
@@ -62,10 +62,9 @@ class Util
 
 
     def self.wght_avg(arr)
-        wght_div = (arr.length*(arr.length+1))/2.0
-        return arr.sort.each_with_index.inject(0) do |acc, (e, i)|
-            acc += ((i+1)/wght_div)*e
-        end
+        n = arr.length
+        factor = 2.0/(n * (n+1))
+        return (0...n).inject(0) { |avg, i| avg += (i+1)*arr[i]*factor }
     end
 
 
