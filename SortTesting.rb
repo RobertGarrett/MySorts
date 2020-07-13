@@ -8,17 +8,6 @@ require_relative "./Config"
 DATA_OPTIONS = Config.OPTIONS(:data)
 SORT_OPTIONS = Config.OPTIONS(:sort)
 
-# arr = Util.make_array(1000000, :random)
-# arr1, arr2 = [arr.clone, arr.clone]
-# t1 = Util.time do
-#     arr1 = arr1[0...7] + [0] + arr1[7..-1]
-# end
-# t2 = Util.time do
-#     arr2.insert(7, 0)
-# end
-# print "#{t1[:time]} / #{t2[:time]}"
-
-@options = nil
 
 def cli_loop()
     exit = false
@@ -66,7 +55,7 @@ def delegate(option)
             puts "!--- Invalid Selection ---!"
         end
     else
-        Timer.run( Config.CONFIG["sort_order"][option] )
+        Timer.run( Config.CONFIG["sort_order"][option-1] )
     end
 end
 

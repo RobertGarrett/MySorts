@@ -1,13 +1,10 @@
 require_relative '../Timer'
+#require_relative "../Util"
 require_relative './Insertion'
 require "byebug"
 
 class MSDRadix
     extend Timer
-
-    @@optimizer = nil
-    @@min_length = nil
-    @@type = nil
 
     # Due to Float rounding errors, there may be some inaccuracies after using
     # the radix sort. To eliminate these, we utilize an insertion sort
@@ -15,11 +12,9 @@ class MSDRadix
     def self.sort( arr, opts = {} )
         @@optimizer = opts[:optimizer]
         @@min_length = opts[:min_length]
-
         @@type = arr[0].is_a?(Numeric) ? Numeric : arr[0].class
-        all_same_type = arr.all? { |e| e.is_a?(@@type) }
 
-        return arr if arr.length <= 1 || !all_same_type
+        return arr if arr.length <= 1 || Util.is_uniform_type?(arr)
 
         if @@type == Numeric
             positives = arr.reject { |e| e < 0 }

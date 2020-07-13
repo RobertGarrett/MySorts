@@ -7,6 +7,7 @@ module Timer
     @@len_1 = 5 + Config.CONFIG["sort_order"].max_by(&:length).length
     @@len_2 = 13
 
+
     def self.run(sym)
         header = "_"*@@len_1
         [10, 100, 1000, 10000, 100000].each do |size|
@@ -18,6 +19,7 @@ module Timer
         @@type_run ? run_by_data_type(sym) : run_by_sort(sym)
     end
 
+
     def self.run_by_data_type(type)
         @@type = type
         config = Config.CONFIG
@@ -27,6 +29,7 @@ module Timer
         sorts = sorts.map { |sort| Object.const_get(sort) }
         sorts.each { |sort| sort.time_all }
     end
+
 
     def self.run_by_sort(sort)
         clazz = Object.const_get(sort.to_s)
@@ -39,6 +42,7 @@ module Timer
         end
     end
 
+
     def time_all()
         times = { 10 => nil, 100 => nil, 1000 => nil, 10000 => nil, 100000 => nil}
         times.each do |k, v|
@@ -48,8 +52,10 @@ module Timer
         self.print_results(times)
     end
 
-    def time(to_sort, num_times = 5, total = 0)
-        num_times.times do
+
+    def time(to_sort, runs = 5)
+        total = 0
+        runs.times do
             time_hash = Util.time{ self.sort(to_sort.clone) }
 
             unless Util.sorted?( time_hash[:val] )
@@ -59,13 +65,11 @@ module Timer
             end
             total += time_hash[:time]
         end
-        return total / num_times
+        return total / runs
     end
 
 
-
 private
-
 
 
     def print_results(times)
@@ -77,6 +81,7 @@ private
         end
         puts output + "|  ~ #{get_big_O(times)}"
     end
+
 
     def get_big_O(times)
         vals = times.values.reject(&:nil?)
@@ -96,11 +101,13 @@ private
         return max[1] >= 2.0 ? max[0] : "n"
     end
 
+
     def test_nk()
         arr1, arr2 = Util.make_special_arrays(100, "nk", @@type)
         timed_ratio = time( arr2.clone )/time( arr1.clone )
         return timed_ratio
     end
+
 
     def test_n_plus_k()
         return 0.0 if @@type == :strings
@@ -108,6 +115,7 @@ private
         timed_ratio = time( arr2.clone )/time( arr1.clone )
         return timed_ratio
     end
+
 
     def isException(num)
         max = Config.CONFIG["sorts"][self.name]["no_run"][@@type.to_s]

@@ -5,63 +5,61 @@ require "byebug"
 class LSDRadix
     extend Timer
 
-    # Due to Float rounding errors, there may be some inaccuracies after using
-    # the radix sort. To eliminate these, we utilize an insertion sort
-    # since it is ~O(n) for nearly sorted arrays.
-    def self.sort(arr)
-        positives = arr.reject { |e| e < 0 }
-        negatives = arr - positives
+    def self.sort(arr, opts = {})
+        suggested_base = 4*Math.log(arr.max, 2).ceil
+        @@base = opts[:base] || [[suggested_base, 10].max, 1024].min
 
-        if positives.length > 1
-            self.get_range(positives).each do |i|
-                positives = counting_sort(positives, i)
-            end
-        end
-        if negatives.length > 1
-            self.get_range(negatives).each do |i|
-                negatives = counting_sort(negatives, i)
-            end
-        end
-        
-        # Note that sense -3 % 10 = 10-3 = 7, the negatives array is already
-        # sorted backwards, so there is no need to reverse it.
-        return Insertion.sort( negatives + positives )
+        self.get_range(arr).each { |i| arr = counting_sort(arr, i) }
+
+        # Insertion sort to correct for float rounding errors
+        # Should have minimal impact on performance
+        return Insertion.sort( sign_counting_sort(arr) )
     end
 
     def self.get_range(arr)
-        min, max = [0, [arr.min.abs, arr.max.abs].max.to_i.to_s.length]
+        min = 0
         arr.each do |ele|
             next if ele.class != Float
-            min = [min, -ele.to_s.split('.')[1].length].min
+            @@base = 10 #yet to implement bases for non-base 10 floats
+            min = [min, -( (ele%1).to_s.length - 2)].min
         end
+
+        max = [arr.min.abs, arr.max.abs].max
+        max = [Math.log(max, @@base).ceil, 0].max
         return (min...max)
     end
 
-    def self.counting_sort(input_arr, exp)
-        @n = 10**exp
-        @m = 10*@n
+    def self.counting_sort(arr, exp)
+        n, m = [ @@base**exp, @@base**(exp+1) ]
 
-        count_arr = create_count_arr(input_arr)
-        result = Array.new( input_arr.size )
+        count_arr = Array.new(@@base){0}
+        arr.each { |e| count_arr[get_sig(e, n, m)] += 1 }
+        (1...@@base).each { |i| count_arr[i] += count_arr[i-1] }
 
-        i = input_arr.size
-        while (i += -1) >= 0
-            item = input_arr[i]
-            sig = ( (item % @m) / @n ).truncate
+        result = Array.new( arr.size )
+
+        for i in 1..arr.size
+            sig = get_sig( arr[-i], n, m )
             count_arr[sig] += -1
-            result[count_arr[sig]] = item
+            result[count_arr[sig]] = arr[-i]
         end
         return result
     end
 
-    def self.create_count_arr(arr)
-        count_arr = Array.new(10){0}
-        arr.each do |item|
-            sig = ( (item % @m) / @n ).truncate
-            count_arr[sig] += 1
+    def self.get_sig(ele, n, m)
+        return ((ele % m) / n).truncate
+    end
+
+    def self.sign_counting_sort(arr)
+        count_arr = [ arr.count { |e| e < 0 }, arr.size ]
+        result = Array.new( arr.size )
+
+        for i in 1..arr.size
+            sig = arr[-i] < 0 ? 0 : 1
+            count_arr[sig] += -1
+            result[count_arr[sig]] = arr[-i]
         end
-        (1...10).each { |i| count_arr[i] += count_arr[i-1] }
-        return count_arr
+        return result
     end
 
 end

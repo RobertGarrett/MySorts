@@ -39,7 +39,7 @@ class Util
 
 
     def self.make_array(n, type)
-        max = 1000000
+        max = 100000
         case type
             when :random
                  return Array.new(n){ rand(-max...max) }
@@ -48,7 +48,7 @@ class Util
             when :reversed
                  return (1..n).to_a.reverse
             when :floats
-                 return Array.new(n){ rand(0.0...max).round(3) }
+                 return Array.new(n){ rand(0.0...1.0).round(3) }
             when :strings
                  return Array.new(n){ rand_string( rand(1..100) ) }
         end
@@ -70,12 +70,18 @@ class Util
 
     def self.log_scale(i)
         n = 10**(i+1)
-        return 10*Math::log(10*n, n)
+        return 10*Math.log(10*n, n)
     end
 
 
     def self.is_number?(obj)
         return obj.to_f.to_s == obj.to_s || obj.to_i.to_s == obj.to_s
     end
+
+    def self.is_uniform_type?(arr, type = nil)
+        type = type || arr[0].class
+        return arr.any? { |e| !e.is_a?(type) }
+    end
+
 
 end
