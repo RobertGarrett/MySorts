@@ -5,7 +5,6 @@
         "Merge",
         "Insertion",
         "Shell",
-        "InPlaceInsertion",
         "Selection",
         "Bucket",
         "Pigeonhole",
@@ -19,12 +18,6 @@
                 "strings"
             ],
             "no_run": {}
-        },
-        "InPlaceInsertion": {
-            "data_exceptions": [],
-            "no_run": {
-                "reversed": 100000
-            }
         },
         "Insertion": {
             "data_exceptions": [],

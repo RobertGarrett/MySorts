@@ -1,6 +1,7 @@
 class BinarySearch
-    def self.insert_idx(arr, x)
-        l , r = 0, arr.length - 1
+    def self.insert_idx(arr, x, opts={})
+        l, r = [opts[:lb] || 0, opts[:rb] || (arr.length - 1)]
+
         while l <= r
             m = (l+r)/2;
 
